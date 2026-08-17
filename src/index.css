@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Midnight Slate & Brushed Brass (Royal Contemporary) */
+    --background: 222 36% 8%;       /* #0D121B Deep Midnight Slate */
+    --foreground: 210 30% 96%;      /* #F1F5F9 Crisp Alabaster Platinum */
+
+    --card: 220 30% 12%;            /* #141B27 Tailored Midnight Card */
+    --card-foreground: 210 30% 96%;
+
+    --popover: 220 30% 12%;
+    --popover-foreground: 210 30% 96%;
+
+    --primary: 41 72% 52%;          /* #D4AF37 Royal Brushed Brass */
+    --primary-foreground: 222 36% 8%;
+
+    --secondary: 220 25% 17%;       /* #1E2737 Elevated Slate Surface */
+    --secondary-foreground: 210 30% 96%;
+
+    --muted: 220 22% 16%;           /* #1A2230 Muted Slate Surface */
+    --muted-foreground: 215 20% 65%;/* #94A3B8 Soft Ice Slate */
+
+    --accent: 41 72% 52%;
+    --accent-foreground: 222 36% 8%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 218 24% 20%;          /* #263346 Fine Architectural Slate Hairline */
+    --input: 218 24% 20%;
+    --ring: 41 72% 52%;
+
+    --radius: 0.875rem;
+  }
+
+  .dark {
+    --background: 222 36% 8%;
+    --foreground: 210 30% 96%;
+    --card: 220 30% 12%;
+    --card-foreground: 210 30% 96%;
+    --popover: 220 30% 12%;
+    --popover-foreground: 210 30% 96%;
+    --primary: 41 72% 52%;
+    --primary-foreground: 222 36% 8%;
+    --secondary: 220 25% 17%;
+    --secondary-foreground: 210 30% 96%;
+    --muted: 220 22% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 41 72% 52%;
+    --accent-foreground: 222 36% 8%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 218 24% 20%;
+    --input: 218 24% 20%;
+    --ring: 41 72% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom Smooth Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
+}
+
+/* Hidden scrollbar utility for horizontal scroll containers */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Atmospheric Environmental Zones */
+  .bg-atmosphere-light,
+  .bg-atmosphere-linen,
+  .bg-atmosphere-dark {
+    background-color: #0D121B;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.12), transparent 70%),
+      radial-gradient(circle at 100% 100%, rgba(20, 30, 48, 0.6), transparent 50%);
+  }
+
+  /* Architectural Hairline Grid Texture */
+  .bg-grid-architectural {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(38, 51, 70, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(38, 51, 70, 0.35) 1px, transparent 1px);
+  }
+
+  /* Soft Vignette Overlay */
+  .vignette-subtle {
+    box-shadow: inset 0 0 100px rgba(7, 10, 15, 0.6);
+  }
+
+  /* Editorial Serif Display Tracking & Leading */
+  .editorial-title {
+    font-feature-settings: "ss01" 1, "dlig" 1;
+  }
+}
+
+/* Dialog / Overlay Animations */
+@keyframes overlay-show {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlay-hide {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes dialog-show {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes dialog-hide {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-state="open"].dialog-overlay {
+  animation: overlay-show 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-state="closed"].dialog-overlay {
+  animation: overlay-hide 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-state="open"].dialog-content {
+  animation: dialog-show 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-state="closed"].dialog-content {
+  animation: dialog-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Staggered product specimen reveal */
+@keyframes specimen-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-from-right 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.animate-fade-in {
+  animation: fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.animate-specimen-reveal {
+  animation: specimen-reveal 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Smooth scroll behavior for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile category nav touch targets */
+@media (max-width: 639px) {
+  #catalog-section [role="tablist"] button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Reduced-motion: disable all custom animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
