@@ -1,84 +1,102 @@
 import React from 'react'
-import { MapPin, Phone, Mail, Clock, ArrowUpRight } from 'lucide-react'
+import { Mail, ArrowUpRight, MessageCircle } from 'lucide-react'
 import { BRAND_CONFIG } from '../../data/brand'
+import { BrandLogo } from '../ui/BrandLogo'
 
 export const Footer: React.FC = () => {
+  const whatsappUrl = `https://wa.me/${BRAND_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+    'Hello Fakhama Decor Atelier, I would like to inquire about your architectural showroom collection and bespoke pieces.'
+  )}`
+
   return (
-    <footer id="atelier-info" className="bg-stone-100/80 border-t border-border mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16">
+    <footer id="atelier-info" className="relative mt-6 sm:mt-8 pt-8 sm:pt-10 pb-8 overflow-hidden border-t border-border/70 bg-card/40">
+      {/* Gentle ambient top glow to merge with background without hard cuts */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-stone-200/20 to-transparent pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative">
+        
+        {/* 3-Column Symmetrical Layout: Left (Name/Summary) | Center (Emblem Logo) | Right (Inquiries) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 items-center">
           
-          {/* Brand Vision & Mission */}
-          <div className="md:col-span-5 space-y-6">
-            <div className="space-y-2">
-              <span className="font-serif text-3xl tracking-[0.2em] font-normal text-foreground">
+          {/* Left Column: Business Name & Identity */}
+          <div className="flex flex-col items-start space-y-2 text-left">
+            <div className="space-y-0.5">
+              <h3 className="font-serif text-2xl sm:text-3xl font-normal tracking-[0.24em] text-foreground uppercase leading-none">
                 {BRAND_CONFIG.name}
+              </h3>
+              <span className="text-[10px] font-mono uppercase tracking-[0.24em] text-primary font-medium block">
+                Architectural Living &amp; Objects
               </span>
-              <p className="text-xs uppercase font-mono tracking-[0.25em] text-primary">
-                {BRAND_CONFIG.tagline}
-              </p>
             </div>
-            <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md">
-              {BRAND_CONFIG.subtitle} We collaborate with master stonemasons, woodturners, and metalsmiths across Europe and Japan to produce enduring architectural statements.
+
+            <p className="text-xs text-muted-foreground font-light leading-relaxed max-w-sm font-sans pt-0.5">
+              Handcrafted architectural furniture, Roman travertine monoliths, and bespoke lighting curated for elevated living spaces.
             </p>
-            <div className="pt-2 flex items-center gap-6 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Atelier Open for Private Consultations
+          </div>
+
+          {/* Middle Column: Sculptural Emblem Logo Stage */}
+          <div className="flex flex-col items-center justify-center text-center space-y-2">
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-primary/20 rounded-3xl blur-md opacity-40 group-hover:opacity-80 transition-opacity pointer-events-none" />
+              <div className="relative p-3 rounded-2xl bg-secondary/60 border border-border/80 shadow-2xs hover:scale-105 transition-transform duration-300">
+                <BrandLogo size="lg" showText={false} />
+              </div>
+            </div>
+
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-mono tracking-[0.24em] uppercase text-muted-foreground font-medium block">
+                Riyadh Atelier
+              </span>
+              <span className="text-[9px] font-mono text-primary tracking-[0.2em] uppercase">
+                Est. {BRAND_CONFIG.year}
               </span>
             </div>
           </div>
 
-          {/* Showroom Physical Atelier */}
-          <div className="md:col-span-4 space-y-4">
+          {/* Right Column: Direct Inquiries (Email + WhatsApp Number) */}
+          <div className="flex flex-col md:items-end items-start space-y-2.5 md:text-right">
             <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-foreground font-semibold">
-              Showroom Atelier
+              Inquiries &amp; Consultations
             </h4>
-            <div className="space-y-3 text-sm text-muted-foreground font-light">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-primary shrink-0 mt-1" />
-                <span>{BRAND_CONFIG.showroomAddress}</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <Clock className="h-4 w-4 text-primary shrink-0 mt-1" />
-                <span>{BRAND_CONFIG.contact.hours}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Inquiries & Communication */}
-          <div className="md:col-span-3 space-y-4">
-            <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-foreground font-semibold">
-              Direct Contact
-            </h4>
-            <div className="space-y-3 text-sm text-muted-foreground font-light">
+            
+            <div className="space-y-2 text-xs text-muted-foreground font-light flex flex-col md:items-end items-start">
+              {/* Email Link */}
               <a
-                href={`mailto:${BRAND_CONFIG.contact.email}`}
+                href={`mailto:${BRAND_CONFIG.contact.email}?subject=Showroom%20Collection%20Inquiry`}
                 className="flex items-center gap-2 hover:text-foreground transition-colors group"
               >
                 <Mail className="h-4 w-4 text-primary shrink-0" />
                 <span>{BRAND_CONFIG.contact.email}</span>
                 <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </a>
+
+              {/* WhatsApp Linked Number */}
               <a
-                href={`tel:${BRAND_CONFIG.contact.phone}`}
-                className="flex items-center gap-2 hover:text-foreground transition-colors group"
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-foreground hover:text-primary transition-colors group font-mono font-medium"
+                title="Chat on WhatsApp"
               >
-                <Phone className="h-4 w-4 text-primary shrink-0" />
+                <MessageCircle className="h-4 w-4 text-emerald-600 shrink-0 group-hover:scale-110 transition-transform" />
                 <span>{BRAND_CONFIG.contact.phone}</span>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 ml-1">
+                  WhatsApp
+                </span>
               </a>
             </div>
           </div>
 
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-12 mt-12 border-t border-border/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground font-light">
-          <p>© {BRAND_CONFIG.year} {BRAND_CONFIG.name} Showroom. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <span>Architectural Living Catalog</span>
+        {/* Bottom Minimal Copyright */}
+        <div className="pt-4 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] font-mono text-muted-foreground">
+          <p>© {BRAND_CONFIG.year} {BRAND_CONFIG.name} Atelier. All rights reserved.</p>
+          <div className="flex items-center gap-2.5">
+            <span>Architectural Collection</span>
             <span>•</span>
-            <span>Bespoke Materiality</span>
+            <span>Bespoke Specifications</span>
           </div>
         </div>
       </div>

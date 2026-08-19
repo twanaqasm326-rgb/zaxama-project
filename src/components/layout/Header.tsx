@@ -1,15 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search, ShoppingBag, Menu, X } from 'lucide-react'
 import { useShowroom } from '../../context/ShowroomContext'
 import { useShoppingBox } from '../../context/ShoppingBoxContext'
-import { BRAND_CONFIG } from '../../data/brand'
+import { BrandLogo } from '../ui/BrandLogo'
 import { cn } from '../../lib/utils'
 
 export const Header: React.FC = () => {
   const { searchQuery, setSearchQuery, setSelectedCategory } = useShowroom()
   const { setIsOpen: setIsShoppingBoxOpen, totalCount: totalSelectedCount } = useShoppingBox()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleNavClick = (categoryId?: string, sectionId?: string) => {
     setIsMobileMenuOpen(false)
@@ -25,68 +34,86 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/90 backdrop-blur-md border-b border-border/80 transition-all duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+    <header
+      className={cn(
+        "sticky top-0 z-40 w-full transition-all duration-300",
+        isScrolled
+          ? "bg-background/90 backdrop-blur-md border-b border-border/80 shadow-subtle py-3.5"
+          : "bg-background/60 backdrop-blur-xs py-5"
+      )}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
         
-        {/* Brand Logo & Tagline */}
-        <div className="flex items-center gap-6">
+        {/* Brand Wordmark & Logo */}
+        <div className="flex items-center gap-4">
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault()
               handleNavClick('all', 'root')
             }}
-            className="flex items-baseline gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+            className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
           >
-            <span className="font-serif text-2xl md:text-3xl font-normal tracking-[0.2em] text-foreground group-hover:text-primary transition-colors">
-              {BRAND_CONFIG.name}
-            </span>
-            <span className="hidden sm:inline-block text-[10px] uppercase font-mono tracking-[0.25em] text-muted-foreground border-l border-border pl-3 py-0.5">
-              Showroom Atelier
-            </span>
+            <BrandLogo size="md" showTagline={false} />
           </a>
         </div>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+        {/* Minimal Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-[0.16em] text-muted-foreground font-medium">
           <button
             onClick={() => handleNavClick('all', 'catalog-section')}
-            className="hover:text-foreground transition-colors cursor-pointer py-1"
+            className="hover:text-foreground transition-colors cursor-pointer py-1 relative group"
           >
-            Catalog
+            <span>All Pieces</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
           </button>
+
           <button
-            onClick={() => handleNavClick(undefined, 'spotlight-section')}
-            className="hover:text-foreground transition-colors cursor-pointer py-1"
+            onClick={() => handleNavClick('living', 'catalog-section')}
+            className="hover:text-foreground transition-colors cursor-pointer py-1 relative group"
           >
-            Spotlight
+            <span>Living</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
           </button>
+
           <button
-            onClick={() => handleNavClick(undefined, 'story-section')}
-            className="hover:text-foreground transition-colors cursor-pointer py-1"
+            onClick={() => handleNavClick('dining', 'catalog-section')}
+            className="hover:text-foreground transition-colors cursor-pointer py-1 relative group"
           >
-            Craft & Materiality
+            <span>Dining</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
           </button>
+
+          <button
+            onClick={() => handleNavClick('lighting', 'catalog-section')}
+            className="hover:text-foreground transition-colors cursor-pointer py-1 relative group"
+          >
+            <span>Lighting</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+          </button>
+
           <button
             onClick={() => handleNavClick(undefined, 'atelier-info')}
-            className="hover:text-foreground transition-colors cursor-pointer py-1"
+            className="hover:text-foreground transition-colors cursor-pointer py-1 relative group"
           >
-            Showroom Info
+            <span>Atelier</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
           </button>
         </nav>
 
-        {/* Actions & Search */}
+        {/* Actions: Search + Selection Drawer Pill */}
         <div className="flex items-center gap-3">
-          {/* Search Bar */}
+          
+          {/* Quick Search */}
           <div className={cn(
             "relative transition-all duration-300",
-            isSearchOpen ? "w-48 sm:w-64" : "w-9 sm:w-64"
+            isSearchOpen ? "w-48 sm:w-56" : "w-8 sm:w-48"
           )}>
             <div className="relative flex items-center">
-              <Search className="absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search collection, stone, wood..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchOpen(true)}
@@ -94,16 +121,16 @@ export const Header: React.FC = () => {
                   if (!searchQuery) setIsSearchOpen(false)
                 }}
                 className={cn(
-                  "w-full bg-card/80 border border-border rounded-full pl-9 pr-8 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all",
+                  "w-full bg-card/80 border border-border/80 rounded-full pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-sans",
                   !isSearchOpen && "hidden sm:block"
                 )}
+                aria-label="Search collection"
               />
-              {/* Mobile search toggle icon */}
               {!isSearchOpen && (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="sm:hidden p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  aria-label="Open search"
+                  className="sm:hidden p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer"
+                  aria-label="Open search input"
                 >
                   <Search className="h-4 w-4" />
                 </button>
@@ -111,29 +138,31 @@ export const Header: React.FC = () => {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 text-muted-foreground hover:text-foreground text-xs"
+                  className="absolute right-2.5 text-muted-foreground hover:text-foreground text-xs p-0.5 rounded-full"
+                  aria-label="Clear search query"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className="h-3 w-3" />
                 </button>
               )}
             </div>
           </div>
 
-          {/* Selection Box Indicator Pill */}
+          {/* Selection Box Pill */}
           <button
             onClick={() => setIsShoppingBoxOpen(true)}
-            className="relative flex items-center gap-2 bg-secondary hover:bg-stone-200/70 text-foreground px-3.5 py-1.5 rounded-full text-xs font-medium border border-border/80 transition-all cursor-pointer shadow-subtle group focus-visible:ring-2 focus-visible:ring-primary"
-            title="Open Curated Selection Box"
-            aria-label={`Open Selection Box, ${totalSelectedCount} items selected`}
+            className="relative inline-flex items-center gap-2 bg-card/90 hover:bg-secondary text-foreground px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider font-medium border border-border/80 shadow-2xs hover:border-primary/50 transition-all cursor-pointer group active:scale-97"
+            aria-label={`Open Curated Selection Box with ${totalSelectedCount} items`}
           >
             <ShoppingBag className="h-3.5 w-3.5 text-primary group-hover:scale-110 transition-transform" />
-            <span className="hidden xs:inline">Selected</span>
-            <span className={cn(
-              "px-1.5 py-0.2 rounded-full text-[11px] font-mono transition-colors",
-              totalSelectedCount > 0
-                ? "bg-primary text-primary-foreground font-semibold"
-                : "bg-muted text-muted-foreground"
-            )}>
+            <span className="hidden sm:inline">Box</span>
+            <span
+              className={cn(
+                "px-2 py-0.2 rounded-full text-[11px] font-mono font-semibold transition-colors",
+                totalSelectedCount > 0
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "bg-stone-200 text-muted-foreground"
+              )}
+            >
               {totalSelectedCount}
             </span>
           </button>
@@ -141,47 +170,47 @@ export const Header: React.FC = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary"
-            aria-label="Toggle Navigation Menu"
+            className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary focus:outline-none cursor-pointer"
+            aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-card border-b border-border px-6 py-6 space-y-4 animate-slide-in-top shadow-card">
-          <div className="space-y-3">
-            <button
-              onClick={() => handleNavClick('all', 'catalog-section')}
-              className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/50"
-            >
-              Showroom Catalog
-            </button>
-            <button
-              onClick={() => handleNavClick(undefined, 'spotlight-section')}
-              className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/50"
-            >
-              Curated Spotlight
-            </button>
-            <button
-              onClick={() => handleNavClick(undefined, 'story-section')}
-              className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/50"
-            >
-              Craftsmanship & Heritage
-            </button>
-            <button
-              onClick={() => handleNavClick(undefined, 'atelier-info')}
-              className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2"
-            >
-              Atelier Hours & Location
-            </button>
-          </div>
-
-          <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-            <span>{BRAND_CONFIG.showroomAddress}</span>
-          </div>
+        <div className="md:hidden bg-card border-b border-border px-6 py-5 space-y-3 animate-fade-in shadow-card">
+          <button
+            onClick={() => handleNavClick('all', 'catalog-section')}
+            className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/40 transition-colors"
+          >
+            All Pieces
+          </button>
+          <button
+            onClick={() => handleNavClick('living', 'catalog-section')}
+            className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/40 transition-colors"
+          >
+            Living &amp; Seating
+          </button>
+          <button
+            onClick={() => handleNavClick('dining', 'catalog-section')}
+            className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/40 transition-colors"
+          >
+            Monolithic Dining
+          </button>
+          <button
+            onClick={() => handleNavClick('lighting', 'catalog-section')}
+            className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 border-b border-border/40 transition-colors"
+          >
+            Architectural Lighting
+          </button>
+          <button
+            onClick={() => handleNavClick(undefined, 'atelier-info')}
+            className="block w-full text-left font-serif text-lg text-foreground hover:text-primary py-2 transition-colors"
+          >
+            Atelier Info &amp; Inquiries
+          </button>
         </div>
       )}
     </header>

@@ -48,44 +48,32 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // FAKHAMA DECOR Royal Contemporary Environmental Palettes
+        // FAKHAMA DECOR Warm Architectural Atelier Palette
         showroom: {
-          slate: '#0D121B',          // Primary Midnight Slate Atmosphere
-          card: '#141B27',           // Tailored Midnight Card Surface
-          surface: '#1E2737',        // Elevated Slate Surface
-          hairline: '#263346',       // Subtle Structural Hairline
-          obsidian: '#080B10',       // Deepest Obsidian Chamber
-          charcoal: '#111722',       // Dark Midnight Charcoal
-          brass: '#D4AF37',          // Signature Royal Brushed Brass
-          burnished: '#B89228',      // Burnished Brass Accent
-          gold: '#E5C158',           // Bright Gold Specular
-          muted: '#94A3B8',          // Soft Ice Slate
+          alabaster: '#FAF8F5',       // Primary Light Warm Canvas
+          travertine: '#F3EFEA',      // Soft Linen Travertine Card
+          stone: '#EAE4DC',           // Elevated Warm Stone
+          hairline: '#DFD9CE',        // 1px Precision Hairline
+          hairlineDark: '#2C2723',    // Dark Chamber Hairline
+          obsidian: '#12100E',        // Deep Obsidian Monolith
+          charcoal: '#1E1B18',        // Smoked Charcoal Text
+          umber: '#767067',           // Muted Umber Dimension Tags
+          bronze: '#C5A059',          // Signature Champagne Brushed Gold
+          burnished: '#A37F3C',       // Burnished Bronze Hover
+          goldLight: '#E8D49E',       // Luminescent Gold Highlight
         },
         brand: {
-          50: '#FDFBF0',
-          100: '#FAF4DC',
-          200: '#F4E7B2',
-          300: '#ECD581',
-          400: '#E2C055',
-          500: '#D4AF37', // Signature Royal Brushed Brass
-          600: '#B89228',
-          700: '#926F1D',
-          800: '#6E5016',
-          900: '#4A340E',
-          950: '#2B1E06',
-        },
-        stone: {
-          50: '#F1F5F9',
-          100: '#E2E8F0',
-          200: '#CBD5E1',
-          300: '#94A3B8',
-          400: '#64748B',
-          500: '#475569',
-          600: '#334155',
-          700: '#1E293B',
-          800: '#141B27',
-          900: '#0D121B', // Deep Midnight Slate
-          950: '#080B10',
+          50: '#FDFBF7',
+          100: '#FAF4EB',
+          200: '#F3E8D3',
+          300: '#E9D5B0',
+          400: '#DCBD85',
+          500: '#C5A059', // Signature Champagne Brushed Gold
+          600: '#A37F3C',
+          700: '#82622C',
+          800: '#644A20',
+          900: '#463316',
+          950: '#281C0B',
         }
       },
       borderRadius: {
@@ -97,21 +85,20 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
         serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         display: ['"Outfit"', '"Plus Jakarta Sans"', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {
-        'subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
-        'card': '0 4px 20px -2px rgba(28, 25, 23, 0.06), 0 2px 6px -1px rgba(28, 25, 23, 0.03)',
-        'modal': '0 25px 50px -12px rgba(28, 25, 23, 0.18)',
-        'drawer': '-10px 0 30px -5px rgba(28, 25, 23, 0.12)',
-        'glow': '0 0 35px -5px rgba(184, 147, 88, 0.25)',
-        'pedestal': '0 20px 40px -15px rgba(24, 22, 20, 0.08)',
-        'monolith': '0 30px 60px -20px rgba(0, 0, 0, 0.35)',
+        'subtle': '0 1px 3px 0 rgba(30, 27, 24, 0.03), 0 1px 2px -1px rgba(30, 27, 24, 0.02)',
+        'card': '0 6px 24px -4px rgba(30, 27, 24, 0.05), 0 2px 6px -1px rgba(30, 27, 24, 0.03)',
+        'modal': '0 25px 60px -12px rgba(24, 22, 19, 0.22)',
+        'drawer': '-12px 0 35px -5px rgba(24, 22, 19, 0.14)',
+        'glow': '0 0 30px -4px rgba(197, 160, 89, 0.22)',
+        'pedestal': '0 18px 45px -12px rgba(30, 27, 24, 0.06)',
+        'monolith': '0 30px 60px -20px rgba(0, 0, 0, 0.45)',
       },
       backgroundImage: {
-        'radial-ambient': 'radial-gradient(circle at 50% 0%, rgba(184, 147, 88, 0.08) 0%, rgba(250, 248, 245, 0) 70%)',
-        'radial-spotlight': 'radial-gradient(circle at 50% 30%, rgba(184, 147, 88, 0.15) 0%, rgba(24, 22, 20, 0) 65%)',
-        'hairline-grid': 'linear-gradient(to right, rgba(226, 221, 213, 0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba(226, 221, 213, 0.4) 1px, transparent 1px)',
+        'radial-ambient': 'radial-gradient(ellipse at 50% 0%, rgba(197, 160, 89, 0.09) 0%, rgba(250, 248, 245, 0) 70%)',
+        'radial-spotlight': 'radial-gradient(circle at 50% 30%, rgba(197, 160, 89, 0.18) 0%, rgba(18, 16, 14, 0) 65%)',
       },
       keyframes: {
         "fade-in": {
@@ -125,7 +112,7 @@ export default {
         "pulse-subtle": {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.8" },
-        }
+        },
       },
       animation: {
         "fade-in": "fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",

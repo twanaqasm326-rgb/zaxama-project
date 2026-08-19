@@ -4,58 +4,58 @@
 
 @layer base {
   :root {
-    /* Midnight Slate & Brushed Brass (Royal Contemporary) */
-    --background: 222 36% 8%;       /* #0D121B Deep Midnight Slate */
-    --foreground: 210 30% 96%;      /* #F1F5F9 Crisp Alabaster Platinum */
+    /* Warm Architectural Alabaster & Soft Linen Travertine Canvas */
+    --background: 40 28% 97%;        /* #FAF8F5 Warm Alabaster Canvas */
+    --foreground: 30 14% 12%;        /* #1E1B18 Deep Smoked Charcoal */
 
-    --card: 220 30% 12%;            /* #141B27 Tailored Midnight Card */
-    --card-foreground: 210 30% 96%;
+    --card: 36 25% 94%;              /* #F3EFEA Soft Linen Travertine Card */
+    --card-foreground: 30 14% 12%;
 
-    --popover: 220 30% 12%;
-    --popover-foreground: 210 30% 96%;
+    --popover: 40 28% 97%;
+    --popover-foreground: 30 14% 12%;
 
-    --primary: 41 72% 52%;          /* #D4AF37 Royal Brushed Brass */
-    --primary-foreground: 222 36% 8%;
+    --primary: 39 48% 54%;           /* #C5A059 Refined Champagne Brushed Gold */
+    --primary-foreground: 40 28% 98%;
 
-    --secondary: 220 25% 17%;       /* #1E2737 Elevated Slate Surface */
-    --secondary-foreground: 210 30% 96%;
+    --secondary: 36 20% 90%;         /* #E9E4DC Elevated Stone Surface */
+    --secondary-foreground: 30 14% 12%;
 
-    --muted: 220 22% 16%;           /* #1A2230 Muted Slate Surface */
-    --muted-foreground: 215 20% 65%;/* #94A3B8 Soft Ice Slate */
+    --muted: 36 15% 88%;            /* #E2DDD5 Muted Stone Surface */
+    --muted-foreground: 30 8% 46%;  /* #767067 Muted Umber Slate */
 
-    --accent: 41 72% 52%;
-    --accent-foreground: 222 36% 8%;
+    --accent: 39 48% 54%;
+    --accent-foreground: 40 28% 98%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 65% 51%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 218 24% 20%;          /* #263346 Fine Architectural Slate Hairline */
-    --input: 218 24% 20%;
-    --ring: 41 72% 52%;
+    --border: 35 18% 86%;           /* #DFD9CE 1px Architectural Hairline */
+    --input: 35 18% 86%;
+    --ring: 39 48% 54%;
 
-    --radius: 0.875rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 222 36% 8%;
-    --foreground: 210 30% 96%;
-    --card: 220 30% 12%;
-    --card-foreground: 210 30% 96%;
-    --popover: 220 30% 12%;
-    --popover-foreground: 210 30% 96%;
-    --primary: 41 72% 52%;
-    --primary-foreground: 222 36% 8%;
-    --secondary: 220 25% 17%;
-    --secondary-foreground: 210 30% 96%;
-    --muted: 220 22% 16%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 41 72% 52%;
-    --accent-foreground: 222 36% 8%;
+    --background: 220 20% 7%;        /* #0D1017 Deep Obsidian Chamber */
+    --foreground: 40 20% 95%;       /* #F4F1EC Warm Alabaster White */
+    --card: 220 18% 11%;            /* #141923 Obsidian Slate Card */
+    --card-foreground: 40 20% 95%;
+    --popover: 220 18% 11%;
+    --popover-foreground: 40 20% 95%;
+    --primary: 39 52% 56%;          /* #CCA85F Warm Brushed Gold */
+    --primary-foreground: 220 20% 7%;
+    --secondary: 220 16% 16%;
+    --secondary-foreground: 40 20% 95%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 39 52% 56%;
+    --accent-foreground: 220 20% 7%;
     --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 98%;
-    --border: 218 24% 20%;
-    --input: 218 24% 20%;
-    --ring: 41 72% 52%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 39 52% 56%;
   }
 }
 
@@ -64,15 +64,16 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
   }
 }
 
-/* Custom Smooth Scrollbar */
+/* Custom Smooth Architectural Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: hsl(var(--background));
@@ -82,10 +83,9 @@
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.6);
+  background: hsl(var(--primary) / 0.5);
 }
 
-/* Hidden scrollbar utility for horizontal scroll containers */
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -95,36 +95,53 @@
     scrollbar-width: none;
   }
 
-  /* Atmospheric Environmental Zones */
-  .bg-atmosphere-light,
-  .bg-atmosphere-linen,
-  .bg-atmosphere-dark {
-    background-color: #0D121B;
+  /* Architectural Warm Light Atmosphere */
+  .bg-atmosphere-light {
+    background-color: #FAF8F5;
     background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.12), transparent 70%),
-      radial-gradient(circle at 100% 100%, rgba(20, 30, 48, 0.6), transparent 50%);
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(197, 160, 89, 0.08), transparent 70%),
+      radial-gradient(circle at 100% 100%, rgba(235, 228, 218, 0.5), transparent 50%);
+  }
+
+  /* Linen Travertine Chamber Atmosphere */
+  .bg-atmosphere-linen {
+    background-color: #F3EFEA;
+    background-image: 
+      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(197, 160, 89, 0.07), transparent 65%),
+      radial-gradient(circle at 0% 100%, rgba(225, 217, 206, 0.6), transparent 60%);
+  }
+
+  /* Deep Obsidian Monolith Chamber Atmosphere */
+  .bg-atmosphere-dark {
+    background-color: #12100E;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(197, 160, 89, 0.15), transparent 70%),
+      radial-gradient(circle at 100% 100%, rgba(30, 26, 23, 0.8), transparent 50%);
   }
 
   /* Architectural Hairline Grid Texture */
   .bg-grid-architectural {
-    background-size: 40px 40px;
+    background-size: 48px 48px;
     background-image: 
-      linear-gradient(to right, rgba(38, 51, 70, 0.35) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(38, 51, 70, 0.35) 1px, transparent 1px);
+      linear-gradient(to right, rgba(210, 202, 190, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(210, 202, 190, 0.35) 1px, transparent 1px);
   }
 
-  /* Soft Vignette Overlay */
-  .vignette-subtle {
-    box-shadow: inset 0 0 100px rgba(7, 10, 15, 0.6);
+  .bg-grid-dark {
+    background-size: 48px 48px;
+    background-image: 
+      linear-gradient(to right, rgba(60, 52, 45, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(60, 52, 45, 0.35) 1px, transparent 1px);
   }
 
-  /* Editorial Serif Display Tracking & Leading */
+  /* Editorial Title Tracking */
   .editorial-title {
     font-feature-settings: "ss01" 1, "dlig" 1;
+    letter-spacing: -0.02em;
   }
 }
 
-/* Dialog / Overlay Animations */
+/* Smooth Dialog & Overlay Transitions */
 @keyframes overlay-show {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -136,7 +153,7 @@
 @keyframes dialog-show {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: translate(-50%, -48%) scale(0.97);
   }
   to {
     opacity: 1;
@@ -150,82 +167,29 @@
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-}
-@keyframes slide-in-from-top {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, -48%) scale(0.97);
   }
 }
 
 [data-state="open"].dialog-overlay {
-  animation: overlay-show 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: overlay-show 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 [data-state="closed"].dialog-overlay {
-  animation: overlay-hide 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: overlay-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 [data-state="open"].dialog-content {
-  animation: dialog-show 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: dialog-show 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 [data-state="closed"].dialog-content {
   animation: dialog-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slide-in-from-right {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Staggered product specimen reveal */
-@keyframes specimen-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-in-right {
-  animation: slide-in-from-right 300ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.animate-fade-in {
-  animation: fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.animate-specimen-reveal {
-  animation: specimen-reveal 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Smooth scroll behavior for the entire page */
+/* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
 }
 
-/* Mobile category nav touch targets */
-@media (max-width: 639px) {
-  #catalog-section [role="tablist"] button {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
-/* Reduced-motion: disable all custom animations */
+/* Reduced-motion accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,183 +1,132 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { LayoutGrid, Columns2, ArrowUpDown, X, Search } from 'lucide-react'
-import { useShowroom, SortOption } from '../../context/ShowroomContext'
+import React from 'react'
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
+import { LayoutGrid, Armchair, Sparkles, Layers, Gem, SunMedium } from 'lucide-react'
+import { useShowroom } from '../../context/ShowroomContext'
 import { SHOWROOM_CATEGORIES } from '../../data/categories'
 import { SHOWROOM_PRODUCTS } from '../../data/products'
 import { cn } from '../../lib/utils'
+
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  all: <LayoutGrid className="h-3.5 w-3.5" />,
+  living: <Armchair className="h-3.5 w-3.5" />,
+  lighting: <Sparkles className="h-3.5 w-3.5" />,
+  dining: <Layers className="h-3.5 w-3.5" />,
+  decor: <Gem className="h-3.5 w-3.5" />,
+  outdoor: <SunMedium className="h-3.5 w-3.5" />,
+}
 
 export const CategoryNav: React.FC = () => {
   const {
     selectedCategory,
     setSelectedCategory,
-    viewLayout,
-    setViewLayout,
-    sortBy,
-    setSortBy,
-    searchQuery,
-    setSearchQuery,
   } = useShowroom()
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [showLeftMask, setShowLeftMask] = useState(false)
-  const [showRightMask, setShowRightMask] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
 
   const getCategoryCount = (categoryId: string) => {
     if (categoryId === 'all') return SHOWROOM_PRODUCTS.length
     return SHOWROOM_PRODUCTS.filter(p => p.category === categoryId).length
   }
 
-  // Handle horizontal scroll indicators
-  const checkScroll = () => {
-    const el = scrollContainerRef.current
-    if (!el) return
-    setShowLeftMask(el.scrollLeft > 10)
-    setShowRightMask(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
-  }
-
-  useEffect(() => {
-    checkScroll()
-    window.addEventListener('resize', checkScroll)
-    return () => window.removeEventListener('resize', checkScroll)
-  }, [])
+  const currentCategory = SHOWROOM_CATEGORIES.find(c => c.id === selectedCategory) || SHOWROOM_CATEGORIES[0]
+  const currentCount = getCategoryCount(selectedCategory)
 
   return (
     <div className="space-y-4">
-      {/* 1. Category Navigation & Discovery Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-border/80">
-        
-        {/* Category Tabs */}
-        <div className="relative flex-1 min-w-0">
-          {/* Left subtle mask */}
-          <div
-            className={cn(
-              "absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none transition-opacity duration-200",
-              showLeftMask ? "opacity-100" : "opacity-0"
-            )}
-          />
+      {/* Centered Atelier Category Dock - Guaranteed no cutoff or overflow */}
+      <div className="w-full flex items-center justify-start md:justify-center overflow-x-auto no-scrollbar py-1 px-1">
+        <div className="inline-flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-full bg-card/95 backdrop-blur-md border border-border/80 shadow-card">
+          {SHOWROOM_CATEGORIES.map((category) => {
+            const isSelected = selectedCategory === category.id
+            const count = getCategoryCount(category.id)
+            const formattedCount = count < 10 ? `0${count}` : `${count}`
+            const icon = CATEGORY_ICONS[category.id] || <LayoutGrid className="h-3.5 w-3.5" />
+            const displayLabel = category.shortLabel || category.label
 
-          <div
-            ref={scrollContainerRef}
-            onScroll={checkScroll}
-            className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-1 scroll-smooth"
-            role="tablist"
-            aria-label="Product categories"
-          >
-            {SHOWROOM_CATEGORIES.map((category) => {
-              const isSelected = selectedCategory === category.id
-              const count = getCategoryCount(category.id)
+            return (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                role="tab"
+                aria-selected={isSelected}
+                className={cn(
+                  "relative px-3.5 py-2 sm:px-4.5 sm:py-2.5 rounded-full text-xs font-mono uppercase tracking-[0.12em] transition-all duration-300 cursor-pointer flex items-center gap-2 select-none z-10 whitespace-nowrap",
+                  isSelected
+                    ? "text-background font-semibold"
+                    : "text-muted-foreground hover:text-foreground font-medium hover:bg-stone-200/50"
+                )}
+              >
+                {/* Active Sliding Satin Pill */}
+                {isSelected && (
+                  <motion.div
+                    layoutId={shouldReduceMotion ? undefined : "activeCategoryDockIndicator"}
+                    className="absolute inset-0 bg-foreground rounded-full shadow-md -z-10"
+                    transition={{
+                      type: "spring",
+                      stiffness: 420,
+                      damping: 34,
+                    }}
+                  />
+                )}
 
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  role="tab"
-                  aria-selected={isSelected}
+                {/* Category Icon */}
+                <span className={cn(
+                  "transition-colors shrink-0",
+                  isSelected ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                )}>
+                  {icon}
+                </span>
+
+                {/* Concise Category Name */}
+                <span>{displayLabel}</span>
+
+                {/* Counter Badge */}
+                <span
                   className={cn(
-                    "group relative whitespace-nowrap px-3.5 py-2 rounded-xl text-xs tracking-wide transition-all duration-200 cursor-pointer flex items-baseline gap-1.5",
+                    "text-[10px] font-mono px-1.5 py-0.5 rounded-full transition-all leading-none shrink-0",
                     isSelected
-                      ? "bg-secondary text-foreground font-semibold shadow-2xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 font-medium"
+                      ? "bg-primary text-primary-foreground font-bold shadow-xs"
+                      : "bg-secondary text-muted-foreground font-semibold"
                   )}
                 >
-                  <span className="font-sans uppercase text-[11px] sm:text-xs">
-                    {category.label}
-                  </span>
-                  
-                  <span
-                    className={cn(
-                      "text-[10px] font-mono",
-                      isSelected ? "text-primary font-bold" : "text-muted-foreground/60"
-                    )}
-                  >
-                    {count}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Right subtle mask */}
-          <div
-            className={cn(
-              "absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none transition-opacity duration-200",
-              showRightMask ? "opacity-100" : "opacity-0"
-            )}
-          />
-        </div>
-
-        {/* 2. Search, Sort & View Controls */}
-        <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
-          
-          {/* Search Bar */}
-          <div className="relative flex-1 sm:w-56 sm:flex-initial">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Search collection..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-card border border-border rounded-xl pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-sans"
-              aria-label="Search collection"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
-                aria-label="Clear search"
-              >
-                <X className="h-3 w-3" />
+                  {formattedCount}
+                </span>
               </button>
-            )}
-          </div>
-
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-1.5 bg-card border border-border rounded-xl px-3 py-1.5 shadow-2xs">
-            <ArrowUpDown className="h-3 w-3 text-primary shrink-0" />
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="bg-transparent text-xs text-foreground focus:outline-none cursor-pointer font-medium font-sans pr-1"
-              aria-label="Sort collection"
-            >
-              <option value="curated">Featured</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="name">Name</option>
-            </select>
-          </div>
-
-          {/* Layout Toggle */}
-          <div className="hidden sm:flex items-center gap-0.5 bg-card border border-border rounded-xl p-1 shadow-2xs">
-            <button
-              onClick={() => setViewLayout('editorial')}
-              className={cn(
-                "p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
-                viewLayout === 'editorial'
-                  ? "bg-secondary text-foreground shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              title="3-Column Grid"
-              aria-label="3-Column Grid"
-            >
-              <Columns2 className="h-3.5 w-3.5" />
-            </button>
-            
-            <button
-              onClick={() => setViewLayout('compact')}
-              className={cn(
-                "p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
-                viewLayout === 'compact'
-                  ? "bg-secondary text-foreground shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              title="4-Column Grid"
-              aria-label="4-Column Grid"
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-            </button>
-          </div>
+            )
+          })}
         </div>
       </div>
+
+      {/* Dynamic Editorial Category Info Sub-Banner with Full Details */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedCategory}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -6 }}
+          transition={{ duration: shouldReduceMotion ? 0.01 : 0.25 }}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 px-4 sm:px-6 rounded-2xl bg-card/60 border border-border/70 backdrop-blur-xs text-xs text-muted-foreground"
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-serif text-sm font-medium text-foreground tracking-wide">
+              {currentCategory.label}
+            </span>
+            {currentCategory.badgeText && (
+              <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/25 font-mono text-[10px] uppercase tracking-wider font-semibold">
+                {currentCategory.badgeText}
+              </span>
+            )}
+            <span className="hidden md:inline text-border">•</span>
+            <p className="font-sans font-light text-muted-foreground text-xs sm:text-sm">
+              {currentCategory.description}
+            </p>
+          </div>
+
+          <div className="font-mono text-[11px] text-muted-foreground shrink-0 uppercase tracking-widest">
+            <span className="text-foreground font-semibold">{currentCount}</span> {currentCount === 1 ? 'Piece' : 'Pieces'}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

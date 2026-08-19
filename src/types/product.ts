@@ -11,6 +11,7 @@ export interface ProductOption {
   value?: string
   colorHex?: string
   textureUrl?: string
+  image?: string
 }
 
 export interface ProductDimensions {
@@ -62,6 +63,7 @@ export interface Product {
 export interface CategoryDefinition {
   id: ProductCategory
   label: string
+  shortLabel?: string
   description?: string
   iconName?: string
   badgeText?: string
