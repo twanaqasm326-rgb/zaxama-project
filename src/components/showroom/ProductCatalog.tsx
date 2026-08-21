@@ -19,23 +19,46 @@ export const ProductCatalog: React.FC = () => {
   return (
     <section
       id="catalog-section"
-      className="relative overflow-hidden pt-4 pb-8 sm:pb-12"
+      className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-24 border-t border-border/50"
     >
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+      {/* Soft Top Ambient Gradient Veil to Blend Seamlessly from Chamber 01 */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-12 bg-primary/10 blur-2xl pointer-events-none" />
+
+      <div className="relative w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 space-y-8 sm:space-y-10">
         
-        {/* Section Title */}
+        {/* Chamber 02 Entrance Marquee Header */}
         <motion.div
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: shouldReduceMotion ? 0.01 : 0.6 }}
-          className="pb-1"
+          className="relative pb-6"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-foreground tracking-tight editorial-title">
-            {currentCategoryDef?.label === 'All Objects' || !currentCategoryDef
-              ? 'Permanent Collection'
-              : currentCategoryDef.label}
-          </h2>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2.5 max-w-2xl text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card/80 border border-border/80 text-[10px] font-mono uppercase tracking-[0.22em] text-primary">
+                <span>Chamber 02 • Permanent Archive Volume IV</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-foreground tracking-tight editorial-title">
+                {currentCategoryDef?.label === 'All Objects' || !currentCategoryDef
+                  ? 'The Curated Exhibition'
+                  : currentCategoryDef.label}
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground font-light leading-relaxed font-sans">
+                Explore catalog specimens, review architectural metric specifications, and curate pieces for your project specification sheet.
+              </p>
+            </div>
+
+            <div className="hidden md:flex items-center gap-3 text-xs font-mono uppercase tracking-widest text-muted-foreground">
+              <span>{filteredProducts.length} Specimens Available</span>
+              <span className="text-primary/60">•</span>
+              <span className="text-primary font-semibold">Live Selection Active</span>
+            </div>
+          </div>
+
+          {/* Soft Center-Lit Hairline */}
+          <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border/80 to-transparent" />
         </motion.div>
 
         {/* Category Navigation */}
@@ -43,19 +66,19 @@ export const ProductCatalog: React.FC = () => {
           <CategoryNav />
         </div>
 
-        {/* Product Gallery Grid: Locked to 3-Column Editorial Grid */}
+        {/* Product Gallery Grid: Spacious 4-Column Vitrine Grid */}
         {filteredProducts.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: shouldReduceMotion ? 0.01 : 0.3 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 lg:gap-8"
           >
             {filteredProducts.map((product, idx) => (
               <ProductCard
                 key={product.id}
                 product={product}
-                priority={idx < 6}
+                priority={idx < 8}
               />
             ))}
           </motion.div>

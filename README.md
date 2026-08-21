@@ -21,3 +21,8 @@ npm run dev        # Start Vite dev server
 npm run build      # TypeScript check + production build
 npm run preview    # Preview production build
 ```
+
+## Design System & Anti-Patterns Log
+
+- [Master Design System](design-system/MASTER.md) — Source of truth for colors, typography, layout, and components.
+- [Bad Ideas & Anti-Patterns Log](BAD_IDEAS_LOG.md) — Permanent log of rejected ideas, layout mistakes, and anti-patterns to prevent repeating them.

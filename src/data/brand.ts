@@ -5,7 +5,7 @@ export const BRAND_CONFIG = {
   showroomAddress: "742 Al-Andalus Boulevard, Design District, Riyadh, KSA",
   contact: {
     email: "atelier@fakhamadecor.com",
-    phone: "+966 11 480 2990",
+    phone: "07517447522",
     whatsapp: "+966555123456",
     hours: "Sat – Thu: 10:00 AM – 9:00 PM (By Appointment & Walk-in)",
   },

@@ -50,6 +50,9 @@ export interface ShoppingBoxContextType {
   setIsReviewOpen: (isOpen: boolean) => void
   addItem: (product: Product, option?: ProductOption, quantity?: number) => void
   toggleItem: (product: Product, option?: ProductOption) => void
+  setProductQuantity: (product: Product, quantity: number, option?: ProductOption) => void
+  incrementProductQuantity: (product: Product, option?: ProductOption) => void
+  decrementProductQuantity: (product: Product, option?: ProductOption) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
   updateItemOption: (itemId: string, option: ProductOption) => void

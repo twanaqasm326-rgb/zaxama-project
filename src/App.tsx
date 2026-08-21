@@ -17,12 +17,12 @@ export default function App() {
           {/* Living Atmospheric Canvas: Moving Light Orbs, Noise Grain & Subtle Grid */}
           <AtmosphericBackground />
 
-          {/* Main Showroom Sections */}
+          {/* Main Showroom Spatial Chambers */}
           <main className="flex-1 w-full relative z-10">
-            {/* Section 1: Business Intro & Logo Stage */}
+            {/* Chamber 01: Atelier Arrival & Master Specimen */}
             <HeroSection />
 
-            {/* Section 2: Permanent Products Collection & Selection Gallery */}
+            {/* Chamber 02: Permanent Collection Gallery & Vitrine Exhibition */}
             <ProductCatalog />
           </main>
 

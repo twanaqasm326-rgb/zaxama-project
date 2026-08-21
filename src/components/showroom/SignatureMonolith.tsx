@@ -45,7 +45,7 @@ export const SignatureMonolith: React.FC = () => {
       {/* Ambient Accent Radial */}
       <div className="absolute -top-32 right-1/4 w-[600px] h-[500px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="relative max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 space-y-12">
         
         {/* Section Provenance Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-stone-800">

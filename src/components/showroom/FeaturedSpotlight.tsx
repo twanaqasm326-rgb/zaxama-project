@@ -34,7 +34,7 @@ export const FeaturedSpotlight: React.FC = () => {
       {/* Subtle Hairline Grid Layer */}
       <div className="absolute inset-0 bg-grid-architectural opacity-30 pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+      <div className="relative w-full mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-28 space-y-14">
         
         {/* Curated Dialogue Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-showroom-hairline">

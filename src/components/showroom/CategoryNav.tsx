@@ -29,13 +29,12 @@ export const CategoryNav: React.FC = () => {
   }
 
   const currentCategory = SHOWROOM_CATEGORIES.find(c => c.id === selectedCategory) || SHOWROOM_CATEGORIES[0]
-  const currentCount = getCategoryCount(selectedCategory)
 
   return (
     <div className="space-y-4">
-      {/* Centered Atelier Category Dock - Guaranteed no cutoff or overflow */}
+      {/* Centered Atelier Category Dock - Glassmorphism Vitrine Design */}
       <div className="w-full flex items-center justify-start md:justify-center overflow-x-auto no-scrollbar py-1 px-1">
-        <div className="inline-flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-full bg-card/95 backdrop-blur-md border border-border/80 shadow-card">
+        <div className="inline-flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-full bg-card/85 backdrop-blur-2xl border border-white/70 dark:border-stone-800 shadow-dock">
           {SHOWROOM_CATEGORIES.map((category) => {
             const isSelected = selectedCategory === category.id
             const count = getCategoryCount(category.id)
@@ -50,17 +49,17 @@ export const CategoryNav: React.FC = () => {
                 role="tab"
                 aria-selected={isSelected}
                 className={cn(
-                  "relative px-3.5 py-2 sm:px-4.5 sm:py-2.5 rounded-full text-xs font-mono uppercase tracking-[0.12em] transition-all duration-300 cursor-pointer flex items-center gap-2 select-none z-10 whitespace-nowrap",
+                  "relative px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-mono uppercase tracking-[0.14em] transition-all duration-300 cursor-pointer flex items-center gap-2 select-none z-10 whitespace-nowrap",
                   isSelected
                     ? "text-background font-semibold"
                     : "text-muted-foreground hover:text-foreground font-medium hover:bg-stone-200/50"
                 )}
               >
-                {/* Active Sliding Satin Pill */}
+                {/* Active Sliding Satin Pill with Champagne Underglow */}
                 {isSelected && (
                   <motion.div
                     layoutId={shouldReduceMotion ? undefined : "activeCategoryDockIndicator"}
-                    className="absolute inset-0 bg-foreground rounded-full shadow-md -z-10"
+                    className="absolute inset-0 bg-foreground rounded-full shadow-[0_4px_20px_-2px_rgba(197,160,89,0.35)] -z-10"
                     transition={{
                       type: "spring",
                       stiffness: 420,
@@ -80,12 +79,12 @@ export const CategoryNav: React.FC = () => {
                 {/* Concise Category Name */}
                 <span>{displayLabel}</span>
 
-                {/* Counter Badge */}
+                {/* Zero-Padded Metallic Counter Badge */}
                 <span
                   className={cn(
                     "text-[10px] font-mono px-1.5 py-0.5 rounded-full transition-all leading-none shrink-0",
                     isSelected
-                      ? "bg-primary text-primary-foreground font-bold shadow-xs"
+                      ? "bg-primary text-primary-foreground font-bold shadow-xs ring-1 ring-primary-foreground/30"
                       : "bg-secondary text-muted-foreground font-semibold"
                   )}
                 >
@@ -97,34 +96,21 @@ export const CategoryNav: React.FC = () => {
         </div>
       </div>
 
-      {/* Dynamic Editorial Category Info Sub-Banner with Full Details */}
+      {/* Sleek Minimalist Chamber Focus Pill */}
       <AnimatePresence mode="wait">
         <motion.div
           key={selectedCategory}
-          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 6 }}
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 4 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -6 }}
-          transition={{ duration: shouldReduceMotion ? 0.01 : 0.25 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 px-4 sm:px-6 rounded-2xl bg-card/60 border border-border/70 backdrop-blur-xs text-xs text-muted-foreground"
+          exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -4 }}
+          transition={{ duration: shouldReduceMotion ? 0.01 : 0.2 }}
+          className="flex items-center justify-center text-center py-1 text-xs text-muted-foreground font-sans"
         >
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="font-serif text-sm font-medium text-foreground tracking-wide">
-              {currentCategory.label}
-            </span>
-            {currentCategory.badgeText && (
-              <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/25 font-mono text-[10px] uppercase tracking-wider font-semibold">
-                {currentCategory.badgeText}
-              </span>
-            )}
-            <span className="hidden md:inline text-border">•</span>
-            <p className="font-sans font-light text-muted-foreground text-xs sm:text-sm">
-              {currentCategory.description}
-            </p>
-          </div>
-
-          <div className="font-mono text-[11px] text-muted-foreground shrink-0 uppercase tracking-widest">
-            <span className="text-foreground font-semibold">{currentCount}</span> {currentCount === 1 ? 'Piece' : 'Pieces'}
-          </div>
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-card/60 border border-border/50 backdrop-blur-xs text-[11px]">
+            <span className="font-serif text-foreground font-medium">{currentCategory.label}</span>
+            <span className="text-primary">•</span>
+            <span className="font-light text-muted-foreground">{currentCategory.description}</span>
+          </span>
         </motion.div>
       </AnimatePresence>
     </div>

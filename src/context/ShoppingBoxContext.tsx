@@ -12,13 +12,16 @@ interface ShoppingBoxContextType {
   setIsReviewOpen: (isOpen: boolean) => void
   addItem: (product: Product, option?: ProductOption, quantity?: number) => void
   toggleItem: (product: Product, option?: ProductOption) => void
+  setProductQuantity: (product: Product, quantity: number, option?: ProductOption) => void
+  incrementProductQuantity: (product: Product, option?: ProductOption) => void
+  decrementProductQuantity: (product: Product, option?: ProductOption) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
   updateItemOption: (itemId: string, option: ProductOption) => void
   updateItemNotes: (itemId: string, notes: string) => void
   clearBox: () => void
-  isProductSelected: (productId: string) => boolean
-  getItemForProduct: (productId: string) => ShoppingBoxItem | undefined
+  isProductSelected: (productId: string, optionId?: string) => boolean
+  getItemForProduct: (productId: string, optionId?: string) => ShoppingBoxItem | undefined
   totalCount: number
   totalValuation: number
   clientInfo: ClientInformation
@@ -179,11 +182,13 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const toggleItem = (product: Product, option?: ProductOption) => {
     setItems(prev => {
-      const existing = prev.find(item => item.product.id === product.id)
+      const defaultOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+      const existing = prev.find(item => 
+        item.product.id === product.id && (defaultOption ? item.selectedOption?.id === defaultOption.id : true)
+      )
       if (existing) {
-        return prev.filter(item => item.product.id !== product.id)
+        return prev.filter(item => item.id !== existing.id)
       } else {
-        const defaultOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
         const newItem: ShoppingBoxItem = {
           id: `${product.id}-${defaultOption?.id || 'default'}-${Date.now()}`,
           product,
@@ -193,6 +198,85 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
         return [...prev, newItem]
       }
+    })
+  }
+
+  const setProductQuantity = (product: Product, quantity: number, option?: ProductOption) => {
+    const targetOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+    if (quantity <= 0) {
+      setItems(prev => prev.filter(item => 
+        !(item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true))
+      ))
+      return
+    }
+
+    const validQty = Math.min(99, Math.max(1, quantity))
+    setItems(prev => {
+      const existingIdx = prev.findIndex(
+        item => item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
+      )
+
+      if (existingIdx >= 0) {
+        const updated = [...prev]
+        updated[existingIdx].quantity = validQty
+        if (targetOption) {
+          updated[existingIdx].selectedOption = targetOption
+        }
+        return updated
+      }
+
+      const newItem: ShoppingBoxItem = {
+        id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
+        product,
+        selectedOption: targetOption,
+        quantity: validQty,
+        addedAt: Date.now(),
+      }
+      return [...prev, newItem]
+    })
+  }
+
+  const incrementProductQuantity = (product: Product, option?: ProductOption) => {
+    const targetOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+    setItems(prev => {
+      const existingIdx = prev.findIndex(
+        item => item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
+      )
+
+      if (existingIdx >= 0) {
+        const updated = [...prev]
+        updated[existingIdx].quantity = Math.min(99, updated[existingIdx].quantity + 1)
+        return updated
+      }
+
+      const newItem: ShoppingBoxItem = {
+        id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
+        product,
+        selectedOption: targetOption,
+        quantity: 1,
+        addedAt: Date.now(),
+      }
+      return [...prev, newItem]
+    })
+  }
+
+  const decrementProductQuantity = (product: Product, option?: ProductOption) => {
+    const targetOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+    setItems(prev => {
+      const existingIdx = prev.findIndex(
+        item => item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
+      )
+
+      if (existingIdx >= 0) {
+        if (prev[existingIdx].quantity <= 1) {
+          return prev.filter((_, idx) => idx !== existingIdx)
+        }
+        const updated = [...prev]
+        updated[existingIdx].quantity = updated[existingIdx].quantity - 1
+        return updated
+      }
+
+      return prev
     })
   }
 
@@ -232,11 +316,16 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setItems([])
   }
 
-  const isProductSelected = (productId: string) => {
-    return items.some(item => item.product.id === productId)
+  const isProductSelected = (productId: string, optionId?: string) => {
+    return items.some(item => 
+      item.product.id === productId && (optionId ? item.selectedOption?.id === optionId : true)
+    )
   }
 
-  const getItemForProduct = (productId: string) => {
+  const getItemForProduct = (productId: string, optionId?: string) => {
+    if (optionId) {
+      return items.find(item => item.product.id === productId && item.selectedOption?.id === optionId)
+    }
     return items.find(item => item.product.id === productId)
   }
 
@@ -258,6 +347,9 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsReviewOpen,
         addItem,
         toggleItem,
+        setProductQuantity,
+        incrementProductQuantity,
+        decrementProductQuantity,
         removeItem,
         updateQuantity,
         updateItemOption,

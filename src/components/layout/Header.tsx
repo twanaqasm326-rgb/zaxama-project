@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
           : "bg-background/60 backdrop-blur-xs py-5"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
+      <div className="w-full mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-28 flex items-center justify-between gap-6">
         
         {/* Brand Wordmark & Logo */}
         <div className="flex items-center gap-4">

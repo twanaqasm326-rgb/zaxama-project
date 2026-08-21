@@ -139,6 +139,50 @@
     font-feature-settings: "ss01" 1, "dlig" 1;
     letter-spacing: -0.02em;
   }
+
+  /* Luxury Atelier Glassmorphism */
+  .glass-atelier {
+    background: rgba(243, 239, 234, 0.78);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+  }
+
+  .glass-dock {
+    background: rgba(247, 244, 239, 0.82);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(223, 217, 206, 0.85);
+  }
+
+  .glass-card {
+    background: rgba(243, 239, 234, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Subtle Metallic Shimmer */
+  .shimmer-badge {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      rgba(197, 160, 89, 0.3),
+      transparent
+    );
+    transform: skewX(-20deg);
+    animation: shimmer 4s infinite;
+  }
 }
 
 /* Smooth Dialog & Overlay Transitions */
