@@ -1,47 +1,36 @@
 import { ShowroomProvider } from './context/ShowroomContext'
 import { ShoppingBoxProvider } from './context/ShoppingBoxContext'
-import { AtmosphericBackground } from './components/layout/AtmosphericBackground'
-import { Footer } from './components/layout/Footer'
-import { HeroSection } from './components/showroom/HeroSection'
+import { Header } from './components/layout/Header'
 import { ProductCatalog } from './components/showroom/ProductCatalog'
 import { ProductModal } from './components/showroom/ProductModal'
 import { ShoppingBoxDrawer } from './components/shopping-box/ShoppingBoxDrawer'
 import { SelectionReviewModal } from './components/shopping-box/SelectionReviewModal'
-import { FloatingSelectionButton } from './components/shopping-box/FloatingSelectionButton'
 
 export default function App() {
   return (
     <ShowroomProvider>
       <ShoppingBoxProvider>
-        <div className="min-h-screen relative flex flex-col bg-background text-foreground selection:bg-primary/20 selection:text-foreground">
-          {/* Living Atmospheric Canvas: Moving Light Orbs, Noise Grain & Subtle Grid */}
-          <AtmosphericBackground />
+        <div className="min-h-screen relative flex flex-col bg-[#0c1017] text-slate-100 selection:bg-sky-500/20 selection:text-white font-sans">
+          
+          {/* 1. Header Bar with Logo, WhatsApp & Shopping Box */}
+          <Header />
 
-          {/* Main Showroom Spatial Chambers */}
+          {/* 2. Main Product Showcase & Vitrine Grid */}
           <main className="flex-1 w-full relative z-10">
-            {/* Chamber 01: Atelier Arrival & Master Specimen */}
-            <HeroSection />
-
-            {/* Chamber 02: Permanent Collection Gallery & Vitrine Exhibition */}
             <ProductCatalog />
           </main>
 
-          {/* Atelier Footer with Logo, Short Summary, Email & WhatsApp */}
-          <Footer />
-
-          {/* Discreet Floating Selection Box Trigger */}
-          <FloatingSelectionButton />
-
-          {/* Interactive Product Inspection Popup */}
+          {/* 3. Product Quick Inspection & Specs Modal */}
           <ProductModal />
 
-          {/* Curated Selection Box Drawer */}
+          {/* 4. Curated Shopping Box Popup Modal */}
           <ShoppingBoxDrawer />
 
-          {/* Specification PDF Generation & Export Modal */}
+          {/* 5. Specification PDF Export Modal */}
           <SelectionReviewModal />
         </div>
       </ShoppingBoxProvider>
     </ShowroomProvider>
   )
 }
+

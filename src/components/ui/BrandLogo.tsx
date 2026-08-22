@@ -1,5 +1,6 @@
 import React from 'react'
 import { cn } from '../../lib/utils'
+import { BRAND_CONFIG } from '../../data/brand'
 
 interface BrandLogoProps {
   className?: string
@@ -15,62 +16,57 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   showTagline = false,
 }) => {
   const sizeMap = {
-    sm: { icon: 'w-6 h-6', text: 'text-lg', sub: 'text-[9px]' },
-    md: { icon: 'w-8 h-8', text: 'text-xl sm:text-2xl', sub: 'text-[10px]' },
-    lg: { icon: 'w-12 h-12', text: 'text-2xl sm:text-3xl', sub: 'text-xs' },
-    hero: { icon: 'w-28 h-28 sm:w-40 sm:h-40', text: 'text-3xl sm:text-4xl', sub: 'text-xs sm:text-sm' },
+    sm: { icon: 'w-7 h-7', text: 'text-base font-bold tracking-wider', sub: 'text-[9px]' },
+    md: { icon: 'w-9 h-9', text: 'text-lg sm:text-xl font-bold tracking-wider', sub: 'text-[10px]' },
+    lg: { icon: 'w-12 h-12', text: 'text-2xl font-bold tracking-widest', sub: 'text-xs' },
+    hero: { icon: 'w-24 h-24', text: 'text-3xl sm:text-4xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
   }
 
   const { icon, text, sub } = sizeMap[size]
 
   return (
-    <div className={cn("inline-flex items-center gap-3.5 select-none", className)}>
-      {/* Sculptural Architectural Emblem */}
+    <div className={cn("inline-flex items-center gap-3 select-none", className)}>
+      {/* Sleek Emblem */}
       <div className={cn("relative flex items-center justify-center shrink-0", icon)}>
-        {/* Ambient Subtle Glow */}
-        <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-lg pointer-events-none" />
+        {/* Glow */}
+        <div className="absolute inset-0 bg-sky-500/20 rounded-xl blur-md pointer-events-none" />
         
-        {/* Geometric Monolithic Emblem SVG */}
         <svg
           viewBox="0 0 100 100"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full text-primary drop-shadow-[0_4px_12px_rgba(197,160,89,0.3)] transition-transform duration-500 hover:scale-105"
+          className="w-full h-full text-sky-400 drop-shadow-[0_2px_8px_rgba(56,189,248,0.4)] transition-transform duration-300 group-hover:scale-105"
         >
-          {/* Outer Rounded Architectural Frame */}
+          {/* Outer Rounded Frame */}
           <rect
-            x="8"
-            y="8"
-            width="84"
-            height="84"
-            rx="18"
-            className="stroke-primary/80"
-            strokeWidth="2.5"
+            x="10"
+            y="10"
+            width="80"
+            height="80"
+            rx="20"
+            className="stroke-sky-400"
+            strokeWidth="3.5"
           />
-          {/* Inner Inscribed Rotated Diamond / Arch */}
+          {/* Inner Geometric Shape */}
           <rect
             x="50"
-            y="14"
-            width="50.9"
-            height="50.9"
-            rx="8"
-            transform="rotate(45 50 14)"
-            className="stroke-foreground/60"
-            strokeWidth="1.75"
+            y="18"
+            width="45"
+            height="45"
+            rx="10"
+            transform="rotate(45 50 18)"
+            className="stroke-slate-400/50"
+            strokeWidth="2.5"
           />
-          {/* Central Monolith Pillar & Arch Line */}
+          {/* Central Pillar */}
           <path
-            d="M50 26V74M36 50H64"
-            stroke="currentColor"
-            strokeWidth="3.5"
+            d="M50 28V72M34 50H66"
+            stroke="#ffffff"
+            strokeWidth="4"
             strokeLinecap="round"
           />
-          {/* Champagne Corner Pips */}
-          <circle cx="50" cy="50" r="4.5" className="fill-primary" />
-          <circle cx="28" cy="28" r="2" className="fill-primary/60" />
-          <circle cx="72" cy="28" r="2" className="fill-primary/60" />
-          <circle cx="28" cy="72" r="2" className="fill-primary/60" />
-          <circle cx="72" cy="72" r="2" className="fill-primary/60" />
+          {/* Center Point */}
+          <circle cx="50" cy="50" r="5" className="fill-sky-400" />
         </svg>
       </div>
 
@@ -79,20 +75,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         <div className="flex flex-col">
           <span
             className={cn(
-              "font-serif font-normal tracking-[0.24em] text-foreground uppercase leading-none bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text",
+              "text-white uppercase leading-none font-sans tracking-wide",
               text
             )}
           >
-            FAKHAMA DECOR
+            {BRAND_CONFIG.name}
           </span>
           {showTagline && (
             <span
               className={cn(
-                "font-mono tracking-[0.28em] text-primary uppercase font-medium mt-1.5 leading-none",
+                "text-sky-400 uppercase font-medium mt-1 leading-none tracking-widest",
                 sub
               )}
             >
-              Architectural Living &amp; Objects
+              {BRAND_CONFIG.tagline}
             </span>
           )}
         </div>
@@ -100,3 +96,4 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     </div>
   )
 }
+

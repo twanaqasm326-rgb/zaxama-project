@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Minus, Eye } from 'lucide-react'
-import { Product, ProductOption } from '../../types/product'
+import { Plus, Check } from 'lucide-react'
+import { Product } from '../../types/product'
 import { useShowroom } from '../../context/ShowroomContext'
 import { useShoppingBox } from '../../context/ShoppingBoxContext'
 import { cn } from '../../lib/utils'
@@ -18,209 +18,118 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   className,
 }) => {
   const { setInspectedProduct } = useShowroom()
-  const {
-    getItemForProduct,
-    addItem,
-    incrementProductQuantity,
-    decrementProductQuantity,
-  } = useShoppingBox()
+  const { addItem, removeItem, getItemForProduct } = useShoppingBox()
 
-  const [selectedOption, setSelectedOption] = useState<ProductOption | undefined>(
-    product.options?.[0]
-  )
-  const [isHovered, setIsHovered] = useState(false)
+  const cartItem = getItemForProduct(product.id)
+  const isInCart = Boolean(cartItem)
 
-  const selectedItem = getItemForProduct(product.id)
-  const isSelected = Boolean(selectedItem)
-  const quantity = selectedItem?.quantity || 0
-
-  // Use finish image if available, otherwise main image
-  const displayImage = selectedOption?.image || product.mainImage
-  const secondaryImage = product.galleryImages && product.galleryImages.length > 1
-    ? product.galleryImages.find(img => img !== displayImage) || product.galleryImages[1]
-    : null
-
-  const handleSelectFirst = (e: React.MouseEvent) => {
+  const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
-    addItem(product, selectedOption, 1)
-  }
-
-  const handleOptionSelect = (e: React.MouseEvent, opt: ProductOption) => {
-    e.stopPropagation()
-    setSelectedOption(opt)
+    if (isInCart && cartItem) {
+      // If already in cart, second click cancels/removes it
+      removeItem(cartItem.id)
+    } else {
+      // First click adds 1 to shopping box
+      addItem(product, product.options?.[0], 1)
+    }
   }
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
       onClick={() => setInspectedProduct(product)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "group relative bg-card/75 backdrop-blur-md border border-white/70 dark:border-stone-800/80 rounded-3xl overflow-hidden shadow-subtle hover:shadow-pedestal-glow hover:border-primary/50 transition-all duration-500 flex flex-col justify-between cursor-pointer p-4 sm:p-5 space-y-4",
+        "group relative bg-[#131823] hover:bg-[#161c2b] border border-slate-800/90 hover:border-slate-700/90 rounded-2xl overflow-hidden p-3.5 sm:p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md",
         className
       )}
     >
-      {/* Ambient Inner Vitrine Hover Spotlight */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/0 via-primary/0 to-primary/8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-      {/* 1. Hero Product Image Frame with Dual Angle Crossfade */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-radial from-stone-100/80 via-stone-200/40 to-stone-300/30 border border-border/40 shadow-inner">
-        {/* Primary View */}
+      {/* 1. Dark Image Frame with Floating Overlays */}
+      <div className="relative aspect-square w-full rounded-xl bg-[#0b0e14] overflow-hidden flex items-center justify-center p-3 border border-slate-800/60 mb-3.5">
+        
+        {/* Centered High-Res Product Image */}
         <img
-          src={displayImage}
+          src={product.mainImage}
           alt={product.name}
-          className={cn(
-            "w-full h-full object-cover object-center transition-all duration-700 ease-out",
-            secondaryImage && isHovered ? "opacity-0 scale-[1.04]" : "opacity-100 group-hover:scale-105"
-          )}
           loading={priority ? 'eager' : 'lazy'}
+          className="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-out"
         />
 
-        {/* Secondary Detail View on Hover */}
-        {secondaryImage && (
-          <img
-            src={secondaryImage}
-            alt={`${product.name} alternate view`}
-            className={cn(
-              "absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out",
-              isHovered ? "opacity-100 scale-105" : "opacity-0 scale-100"
-            )}
-            loading="lazy"
-          />
-        )}
-
-        {/* Translucent SKU & Specimen Code Tag */}
-        <div className="absolute top-2.5 left-2.5 bg-card/90 backdrop-blur-md text-foreground text-[10px] font-mono px-2.5 py-1 rounded-lg border border-border/80 shadow-2xs">
-          {product.code}
-        </div>
-
-        {/* Frosted Archival Specimen Stamp (Replacing generic yellow badge) */}
-        {product.isNew && (
-          <div className="absolute top-2.5 right-2.5 bg-card/90 backdrop-blur-md text-primary text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full font-semibold border border-primary/40 shadow-xs">
-            Archive 2026
-          </div>
-        )}
-
-        {/* Hover Inspect Indicator Sheen */}
-        <div className="absolute inset-0 bg-stone-950/25 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-          <span className="inline-flex items-center gap-1.5 bg-card/95 text-foreground text-xs font-mono font-medium px-4 py-2 rounded-full shadow-modal border border-border/80 backdrop-blur-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-            <Eye className="h-3.5 w-3.5 text-primary" />
-            <span>Inspect Specimen</span>
-          </span>
-        </div>
-      </div>
-
-      {/* 2. Product Name & Subtle Origin with 2-Line Natural Wrap (No Truncation) */}
-      <div className="space-y-1.5 px-0.5 relative z-10">
-        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-          <span>{product.origin || 'Italian Atelier'}</span>
-          {product.dimensions && (
-            <span>{product.dimensions.width}</span>
-          )}
-        </div>
-
-        {/* 2-Line Wrapped Title (Zero Ellipsis Cuts) */}
-        <h3 className="font-serif text-lg font-normal text-foreground group-hover:text-primary transition-colors leading-snug min-h-[2.75rem] line-clamp-2">
-          {product.name}
-        </h3>
-
-        {/* Dynamic Finish Selector with Tactile 16px Swatches */}
-        {product.options && product.options.length > 0 && (
-          <div className="flex items-center gap-1.5 pt-1">
-            <div className="flex items-center gap-1.5">
-              {product.options.map(opt => (
-                <button
-                  key={opt.id}
-                  onClick={(e) => handleOptionSelect(e, opt)}
-                  className={cn(
-                    "w-4 h-4 rounded-full border transition-all cursor-pointer",
-                    selectedOption?.id === opt.id
-                      ? "ring-2 ring-primary ring-offset-2 scale-110 border-primary shadow-xs"
-                      : "border-stone-300 hover:scale-105"
-                  )}
-                  style={{ backgroundColor: opt.colorHex || '#ccc' }}
-                  title={opt.name}
-                  aria-label={`Select finish ${opt.name}`}
-                />
-              ))}
-            </div>
-            <span className="text-[11px] font-mono text-muted-foreground ml-1.5 truncate max-w-[170px]">
-              {selectedOption?.name}
+        {/* Top-Left: Stock & Discount Badges */}
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1 pointer-events-none z-10">
+          {/* Discount Pill Badge (e.g. -150,000 IQD) */}
+          {(product.discountAmount || product.hasDiscount) && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-500 text-white text-[10px] sm:text-[11px] font-bold tracking-tight shadow-xs">
+              {product.discountAmount || `-${product.discountPercent}%`}
             </span>
-          </div>
-        )}
+          )}
+
+          {/* Stock Low Warning Badge (e.g. Only 1 left, Only 2 left) */}
+          {product.stockBadge && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#c97510] text-white text-[10px] sm:text-[11px] font-bold tracking-tight shadow-xs">
+              {product.stockBadge}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* 3. Valuation & Stabilized Selection Pill (Fixed Geometry) */}
-      <div className="pt-3 border-t border-border/50 flex items-center justify-between gap-3 px-0.5 relative z-10">
-        <div>
-          <span className="font-mono text-base sm:text-lg font-semibold text-foreground">
-            ${(product.price * (quantity > 1 ? quantity : 1)).toLocaleString()}
-          </span>
-          <span className="text-[10px] font-mono text-muted-foreground ml-1">
-            USD {quantity > 1 ? `(${quantity}x)` : ''}
-          </span>
+      {/* 2. Product Meta & Pricing */}
+      <div className="space-y-1 text-left flex-1 flex flex-col justify-between">
+        <div className="space-y-1">
+          {/* Title with 2-line clamp */}
+          <h3 className="font-sans font-semibold text-[13px] sm:text-sm text-slate-100 group-hover:text-sky-300 transition-colors leading-snug line-clamp-2 min-h-[2.5rem]">
+            {product.name}
+          </h3>
+
+          {/* Brand Name */}
+          <p className="text-xs text-slate-400 font-medium">
+            {product.brand || 'FAKHAMA DECOR'}
+          </p>
         </div>
 
-        {/* Stabilized Fixed-Dimension Selection Button */}
-        <div className="w-[110px] h-[38px] flex items-center justify-end">
-          {isSelected ? (
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="w-full h-full inline-flex items-center justify-between bg-secondary/90 border border-primary/50 rounded-full px-1.5 shadow-2xs"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <motion.button
-                whileTap={{ scale: 0.85 }}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  decrementProductQuantity(product, selectedOption)
-                }}
-                className="w-6 h-6 rounded-full bg-card hover:bg-stone-300 flex items-center justify-center text-foreground transition-colors cursor-pointer border border-border/80 shadow-xs"
-                aria-label={`Decrease ${product.name} quantity`}
-              >
-                <Minus className="h-3 w-3 text-foreground" />
-              </motion.button>
+        {/* Price Display and Bottom-Right ADD Button */}
+        <div className="pt-2 flex items-center justify-between gap-2">
+          <div className="flex items-baseline gap-1.5 min-w-0">
+            <span className="font-sans font-bold text-base sm:text-[17px] text-white tracking-tight">
+              {product.price.toLocaleString()} {product.currency || 'IQD'}
+            </span>
+            {product.originalPrice && product.originalPrice > product.price && (
+              <span className="text-xs text-slate-500 line-through">
+                {product.originalPrice.toLocaleString()} {product.currency || 'IQD'}
+              </span>
+            )}
+          </div>
 
-              <motion.span
-                key={quantity}
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                className="font-mono text-xs font-bold text-foreground min-w-[1.25rem] text-center select-none"
-              >
-                {quantity}
-              </motion.span>
-
-              <motion.button
-                whileTap={{ scale: 0.85 }}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  incrementProductQuantity(product, selectedOption)
-                }}
-                className="w-6 h-6 rounded-full bg-foreground hover:bg-stone-800 flex items-center justify-center text-primary transition-colors cursor-pointer shadow-xs"
-                aria-label={`Increase ${product.name} quantity`}
-              >
-                <Plus className="h-3 w-3 text-primary" />
-              </motion.button>
-            </motion.div>
-          ) : (
-            <motion.button
-              whileTap={{ scale: 0.94 }}
-              onClick={handleSelectFirst}
-              aria-label={`Add ${product.name} to selection`}
-              className="w-full h-full inline-flex items-center justify-center gap-1.5 rounded-full text-xs font-mono font-semibold uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-xs bg-foreground text-background hover:bg-stone-800 border border-primary/30 hover:border-primary hover:shadow-md"
-            >
-              <Plus className="h-3.5 w-3.5 text-primary" />
-              <span>Select</span>
-            </motion.button>
-          )}
+          {/* ADD Button in Bottom-Right Corner */}
+          <button
+            onClick={handleQuickAdd}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all duration-200 cursor-pointer shadow-md active:scale-95 shrink-0",
+              isInCart
+                ? "bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40"
+                : "bg-sky-500 hover:bg-sky-400 text-white border border-sky-400/40"
+            )}
+            title={isInCart ? `In Box (${cartItem?.quantity})` : "Add to Shopping Box"}
+            aria-label={`Add ${product.name} to shopping box`}
+          >
+            {isInCart ? (
+              <>
+                <Check className="h-3.5 w-3.5 stroke-[3]" />
+                <span>ADDED</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-3.5 w-3.5 stroke-[3]" />
+                <span>ADD</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </motion.article>
   )
 }
+
+

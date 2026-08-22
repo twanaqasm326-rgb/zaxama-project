@@ -215,7 +215,7 @@ export async function generateSpecificationPDF(data: PDFDocumentData): Promise<j
   doc.text(`${data.totalItems} Objects Selected`, col3X, y + 19)
   if (data.options?.includePricing !== false && data.estimatedTotal) {
     doc.setTextColor(COLOR_BRONZE[0], COLOR_BRONZE[1], COLOR_BRONZE[2])
-    doc.text(`Est. Value: $${data.estimatedTotal.toLocaleString()} USD`, col3X, y + 23)
+    doc.text(`Est. Value: ${data.estimatedTotal.toLocaleString()} IQD`, col3X, y + 23)
   }
 
   y += 34
@@ -374,12 +374,12 @@ export async function generateSpecificationPDF(data: PDFDocumentData): Promise<j
       doc.setFont('courier', 'normal')
       doc.setFontSize(7.5)
       doc.setTextColor(COLOR_MUTED[0], COLOR_MUTED[1], COLOR_MUTED[2])
-      doc.text(`Unit: $${item.product.price.toLocaleString()}`, priceX, y + 14, { align: 'right' })
+      doc.text(`Unit: ${item.product.price.toLocaleString()} IQD`, priceX, y + 14, { align: 'right' })
 
       doc.setFont('courier', 'bold')
-      doc.setFontSize(9)
+      doc.setFontSize(8.5)
       doc.setTextColor(COLOR_OBSIDIAN[0], COLOR_OBSIDIAN[1], COLOR_OBSIDIAN[2])
-      doc.text(`$${(item.product.price * item.quantity).toLocaleString()} USD`, priceX, y + 21, { align: 'right' })
+      doc.text(`${(item.product.price * item.quantity).toLocaleString()} IQD`, priceX, y + 21, { align: 'right' })
     }
 
     y += itemHeight + 4
@@ -411,7 +411,7 @@ export async function generateSpecificationPDF(data: PDFDocumentData): Promise<j
   const noticeLines = [
     '• This document represents a curated product selection and architectural specification overview.',
     '• Dimensions, material specifications, and estimated values are provided for planning and reference.',
-    '• To inquire about bespoke proportions, finish samples, or availability, please contact our atelier.',
+    '• To inquire about bespoke proportions, finish samples, or availability, please contact our team.',
   ]
   let nY = y + 12
   noticeLines.forEach(line => {
@@ -431,14 +431,14 @@ export async function generateSpecificationPDF(data: PDFDocumentData): Promise<j
     doc.text('ESTIMATED SELECTION VALUE', totalBoxX + 24, y + 10, { align: 'center' })
 
     doc.setFont('courier', 'bold')
-    doc.setFontSize(11)
+    doc.setFontSize(10)
     doc.setTextColor(255, 255, 255)
-    doc.text(`$${data.estimatedTotal.toLocaleString()}`, totalBoxX + 24, y + 17, { align: 'center' })
+    doc.text(`${data.estimatedTotal.toLocaleString()}`, totalBoxX + 24, y + 17, { align: 'center' })
 
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(5.5)
     doc.setTextColor(COLOR_BRONZE[0], COLOR_BRONZE[1], COLOR_BRONZE[2])
-    doc.text('USD • CATALOG REFERENCE', totalBoxX + 24, y + 22, { align: 'center' })
+    doc.text('IQD • CATALOG REFERENCE', totalBoxX + 24, y + 22, { align: 'center' })
   }
 
   // Draw footers on all pages now that we know total page count

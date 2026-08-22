@@ -6,8 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  ShoppingBag,
-  Trash2,
+  MessageCircle,
 } from 'lucide-react'
 import {
   Dialog,
@@ -18,15 +17,20 @@ import {
 import { useShowroom } from '../../context/ShowroomContext'
 import { useShoppingBox } from '../../context/ShoppingBoxContext'
 import { ProductOption } from '../../types/product'
+import { BRAND_CONFIG } from '../../data/brand'
 import { cn } from '../../lib/utils'
 
 export const ProductModal: React.FC = () => {
-  const { inspectedProduct, setInspectedProduct, products } = useShowroom()
   const {
-    setProductQuantity,
+    inspectedProduct,
+    setInspectedProduct,
+    products,
+  } = useShowroom()
+
+  const {
+    addItem,
     removeItem,
     getItemForProduct,
-    setIsOpen: setIsShoppingBoxOpen,
   } = useShoppingBox()
 
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -44,10 +48,10 @@ export const ProductModal: React.FC = () => {
         setSelectedOption(inspectedProduct.options[0])
         setModalQuantity(1)
       }
-    } else {
+    } else if (inspectedProduct) {
+      const existing = getItemForProduct(inspectedProduct.id)
+      setModalQuantity(existing?.quantity || 1)
       setSelectedOption(null)
-      const existing = inspectedProduct ? getItemForProduct(inspectedProduct.id) : undefined
-      setModalQuantity(existing ? existing.quantity : 1)
     }
   }, [inspectedProduct, getItemForProduct])
 
@@ -87,19 +91,29 @@ export const ProductModal: React.FC = () => {
   const currentBoxItem = getItemForProduct(inspectedProduct.id, selectedOption?.id)
   const isSelected = Boolean(currentBoxItem)
 
-  const handleApplySelection = () => {
-    setProductQuantity(inspectedProduct, modalQuantity, selectedOption || undefined)
+  const handleToggleSelection = () => {
+    if (isSelected && currentBoxItem) {
+      // If already added, clicking again cancels / removes the piece
+      removeItem(currentBoxItem.id)
+    } else {
+      // First click adds piece to shopping box
+      addItem(inspectedProduct, selectedOption || undefined, modalQuantity)
+    }
   }
 
-  const handleRemoveSelection = () => {
-    if (!currentBoxItem) return
-    removeItem(currentBoxItem.id)
-    setModalQuantity(1)
+
+  const handleWhatsAppOrder = () => {
+    const text = encodeURIComponent(
+      `Hello ${BRAND_CONFIG.name}! I would like to order:\n• ${inspectedProduct.name} (${inspectedProduct.code})\n• Quantity: ${modalQuantity}\n• Total: ${(inspectedProduct.price * modalQuantity).toLocaleString()} IQD\n\nPlease confirm availability!`
+    )
+    const phone = BRAND_CONFIG.contact.phone || '07517447522'
+    const formattedPhone = phone.startsWith('0') ? '964' + phone.slice(1) : phone.replace(/[^0-9]/g, '')
+    window.open(`https://wa.me/${formattedPhone}?text=${text}`, '_blank')
   }
 
-  // Related complementary products
+  // Related products
   const complementaryProducts = products
-    .filter(p => p.id !== inspectedProduct.id && (p.category === inspectedProduct.category || p.isFeatured))
+    .filter(p => p.id !== inspectedProduct.id && (p.category === inspectedProduct.category || p.brand === inspectedProduct.brand))
     .slice(0, 2)
 
   return (
@@ -109,30 +123,30 @@ export const ProductModal: React.FC = () => {
         if (!open) setInspectedProduct(null)
       }}
     >
-      <DialogContent className="max-w-4xl p-6 sm:p-9 max-h-[92vh] overflow-y-auto bg-card/95 backdrop-blur-2xl border border-white/80 dark:border-stone-800 shadow-modal rounded-3xl">
+      <DialogContent className="max-w-4xl p-5 sm:p-7 max-h-[92vh] overflow-y-auto bg-[#0f141d] border border-slate-800 text-slate-100 shadow-2xl rounded-3xl">
         <DialogHeader className="sr-only">
-          <DialogTitle>{inspectedProduct.name} - Blueprint &amp; Material Inspection</DialogTitle>
+          <DialogTitle>{inspectedProduct.name} - Product Specifications</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           
-          {/* Main Grid: Gallery (Left) + Specifications (Right) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10">
+          {/* Main Grid: Gallery (Left) + Details (Right) */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8">
             
-            {/* Gallery Column (7 Cols) */}
-            <div className="md:col-span-7 space-y-4">
+            {/* Gallery Column (6 Cols) */}
+            <div className="md:col-span-6 space-y-3">
               
               {/* Active Image Canvas */}
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-stone-200/50 border border-border/70 shadow-inner group">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#070a0f] border border-slate-800/80 shadow-inner flex items-center justify-center p-4 group">
                 <img
                   src={activeImage}
                   alt={`${inspectedProduct.name} - View ${activeImageIndex + 1}`}
-                  className="w-full h-full object-cover object-center transition-transform duration-500"
+                  className="w-full h-full object-contain object-center transition-transform duration-500"
                 />
 
                 {/* SKU Code Overlay */}
-                <div className="absolute top-3 left-3 bg-card/90 backdrop-blur-md text-foreground text-[10px] font-mono px-3 py-1 rounded-md border border-border shadow-xs">
-                  {inspectedProduct.code} • Chamber View
+                <div className="absolute top-3 left-3 bg-[#151b26]/90 backdrop-blur-md text-slate-300 text-[10px] font-mono px-2.5 py-1 rounded-lg border border-slate-700/60 shadow-xs">
+                  {inspectedProduct.code}
                 </div>
 
                 {/* Arrow Controls */}
@@ -140,14 +154,14 @@ export const ProductModal: React.FC = () => {
                   <>
                     <button
                       onClick={() => setActiveImageIndex(prev => (prev === 0 ? allImages.length - 1 : prev - 1))}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card/85 backdrop-blur-md flex items-center justify-center text-foreground hover:bg-card border border-border shadow-sm transition-all cursor-pointer opacity-80 hover:opacity-100"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#151b26]/90 backdrop-blur-md flex items-center justify-center text-slate-300 hover:text-white border border-slate-700 shadow-sm transition-all cursor-pointer"
                       aria-label="Previous angle"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => setActiveImageIndex(prev => (prev === allImages.length - 1 ? 0 : prev + 1))}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card/85 backdrop-blur-md flex items-center justify-center text-foreground hover:bg-card border border-border shadow-sm transition-all cursor-pointer opacity-80 hover:opacity-100"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#151b26]/90 backdrop-blur-md flex items-center justify-center text-slate-300 hover:text-white border border-slate-700 shadow-sm transition-all cursor-pointer"
                       aria-label="Next angle"
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -157,7 +171,7 @@ export const ProductModal: React.FC = () => {
 
                 {/* Image Counter */}
                 {allImages.length > 1 && (
-                  <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md text-white text-[10px] font-mono px-2.5 py-1 rounded-md">
+                  <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md text-white text-[10px] font-mono px-2 py-0.5 rounded-md">
                     {activeImageIndex + 1} / {allImages.length}
                   </div>
                 )}
@@ -165,77 +179,96 @@ export const ProductModal: React.FC = () => {
 
               {/* Thumbnails Row */}
               {allImages.length > 1 && (
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" role="tablist" aria-label="Product angles">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                   {allImages.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
-                      role="tab"
-                      aria-selected={activeImageIndex === idx}
                       className={cn(
-                        "relative w-16 h-12 rounded-lg overflow-hidden border transition-all cursor-pointer shrink-0 shadow-2xs",
+                        "relative w-14 h-14 rounded-xl overflow-hidden border p-1 bg-[#0b0e14] transition-all cursor-pointer shrink-0",
                         activeImageIndex === idx
-                          ? "ring-2 ring-primary border-primary scale-102 shadow-xs"
-                          : "border-border opacity-70 hover:opacity-100"
+                          ? "ring-2 ring-sky-400 border-sky-400"
+                          : "border-slate-800 opacity-60 hover:opacity-100"
                       )}
                     >
-                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
                     </button>
                   ))}
                 </div>
               )}
 
-              {/* Atelier Provenance Guarantee Badge */}
-              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-secondary/60 border border-primary/20 text-xs text-muted-foreground font-mono shadow-2xs">
-                <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
-                <span className="text-[11px] text-foreground font-medium">Numbered Atelier Certificate &amp; Lifetime Structural Integrity</span>
+              {/* Genuine Warranty Badge */}
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-[#141a26] border border-slate-800 text-xs text-slate-300">
+                <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+                <span>100% Genuine Official Warranty &amp; Fast Local Delivery</span>
               </div>
 
             </div>
 
-            {/* Specifications Column (5 Cols) */}
-            <div className="md:col-span-5 space-y-6 flex flex-col justify-between">
+            {/* Specifications Column (6 Cols) */}
+            <div className="md:col-span-6 space-y-4 flex flex-col justify-between">
               
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-primary">
-                    <span className="font-semibold">{inspectedProduct.origin || 'Italian Atelier'}</span>
-                    <span>{inspectedProduct.category ? inspectedProduct.category.toUpperCase() : 'ATELIER'}</span>
+              <div className="space-y-3.5">
+                {/* Brand & Badges */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-sky-400 uppercase tracking-wider">
+                    {inspectedProduct.brand || 'SteelSeries'}
+                  </span>
+                  
+                  <div className="flex items-center gap-1.5">
+                    {inspectedProduct.discountAmount && (
+                      <span className="px-2 py-0.5 rounded-md bg-red-500 text-white text-[10px] font-bold">
+                        {inspectedProduct.discountAmount}
+                      </span>
+                    )}
+                    {inspectedProduct.stockBadge && (
+                      <span className="px-2 py-0.5 rounded-md bg-[#c97510] text-white text-[10px] font-bold">
+                        {inspectedProduct.stockBadge}
+                      </span>
+                    )}
                   </div>
-                  <h2 className="font-serif text-3xl font-normal text-foreground leading-tight">
-                    {inspectedProduct.name}
-                  </h2>
-                  <p className="font-mono text-2xl font-semibold text-foreground pt-1">
-                    ${inspectedProduct.price.toLocaleString()}{' '}
-                    <span className="text-xs font-normal text-muted-foreground">USD</span>
-                  </p>
                 </div>
 
-                <p className="text-xs sm:text-sm text-muted-foreground font-light leading-relaxed font-sans">
+                {/* Name */}
+                <h2 className="font-sans text-xl sm:text-2xl font-bold text-white leading-snug">
+                  {inspectedProduct.name}
+                </h2>
+
+                {/* Pricing */}
+                <div className="flex items-baseline gap-2.5 pt-0.5">
+                  <span className="font-sans text-2xl font-bold text-white tracking-tight">
+                    {inspectedProduct.price.toLocaleString()} IQD
+                  </span>
+                  {inspectedProduct.originalPrice && (
+                    <span className="text-sm text-slate-500 line-through">
+                      {inspectedProduct.originalPrice.toLocaleString()} IQD
+                    </span>
+                  )}
+                </div>
+
+                {/* Short Description */}
+                <p className="text-xs text-slate-300 leading-relaxed">
                   {inspectedProduct.fullDescription || inspectedProduct.shortDescription}
                 </p>
 
-                {/* Finish Selector */}
+                {/* Finish / Edition Selector */}
                 {inspectedProduct.options && inspectedProduct.options.length > 0 && (
-                  <div className="space-y-2 pt-2 border-t border-border/70">
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="text-muted-foreground uppercase text-[10px] tracking-wider">Material Finish:</span>
-                      <span className="text-foreground font-semibold">{selectedOption?.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2" role="radiogroup" aria-label="Finish options">
+                  <div className="space-y-1.5 pt-2 border-t border-slate-800">
+                    <span className="text-xs text-slate-400 font-medium">Edition:</span>
+                    <div className="flex flex-wrap gap-2">
                       {inspectedProduct.options.map(opt => (
                         <button
                           key={opt.id}
                           onClick={() => setSelectedOption(opt)}
                           className={cn(
-                            "px-3 py-1.5 rounded-lg text-xs font-mono border transition-all cursor-pointer flex items-center gap-1.5",
+                            "px-3 py-1.5 rounded-lg text-xs border transition-all cursor-pointer flex items-center gap-1.5",
                             selectedOption?.id === opt.id
-                              ? "bg-secondary border-primary text-foreground font-semibold shadow-xs ring-1 ring-primary/30"
-                              : "border-border text-muted-foreground hover:text-foreground hover:bg-stone-100"
+                              ? "bg-sky-500/20 border-sky-500 text-white font-semibold"
+                              : "border-slate-800 text-slate-400 hover:text-white bg-[#151b26]"
                           )}
                         >
                           <span
-                            className="w-3 h-3 rounded-full border border-stone-300"
+                            className="w-2.5 h-2.5 rounded-full border border-slate-600"
                             style={{ backgroundColor: opt.colorHex || '#ccc' }}
                           />
                           <span>{opt.name}</span>
@@ -245,76 +278,50 @@ export const ProductModal: React.FC = () => {
                   </div>
                 )}
 
-                {/* Technical Architectural Specifications Matrix */}
-                <div className="space-y-2 pt-3 border-t border-border/70 text-xs font-mono">
-                  <div className="text-[10px] uppercase tracking-wider text-primary font-semibold flex items-center justify-between">
-                    <span>Architectural Specifications</span>
-                    <span className="text-muted-foreground font-normal">Metric Blueprint</span>
-                  </div>
-                  <div className="bg-secondary/50 rounded-xl p-3.5 space-y-2 border border-border/80 shadow-2xs">
-                    {inspectedProduct.dimensions && (
-                      <div className="flex justify-between gap-2 border-b border-border/40 pb-1.5">
-                        <span className="text-muted-foreground">Dimensions:</span>
-                        <span className="text-foreground text-right font-medium">
-                          {inspectedProduct.dimensions.width} × {inspectedProduct.dimensions.depth} × {inspectedProduct.dimensions.height}
-                        </span>
-                      </div>
-                    )}
-                    {inspectedProduct.dimensions?.weight && (
-                      <div className="flex justify-between gap-2 border-b border-border/40 pb-1.5">
-                        <span className="text-muted-foreground">Net Mass:</span>
-                        <span className="text-foreground font-medium">{inspectedProduct.dimensions.weight}</span>
-                      </div>
-                    )}
-                    {inspectedProduct.materials && (
-                      <div className="flex justify-between gap-2 border-b border-border/40 pb-1.5">
-                        <span className="text-muted-foreground">Living Materials:</span>
-                        <span className="text-foreground text-right font-medium">
-                          {inspectedProduct.materials.join(', ')}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex justify-between gap-2 pt-0.5">
-                      <span className="text-muted-foreground">Atelier Lead Time:</span>
-                      <span className="text-foreground font-semibold text-primary">{inspectedProduct.leadTime || 'Immediate Dispatch'}</span>
+                {/* Technical Specifications Matrix */}
+                {inspectedProduct.specifications && inspectedProduct.specifications.length > 0 && (
+                  <div className="space-y-1.5 pt-2 border-t border-slate-800 text-xs">
+                    <span className="text-slate-400 font-medium">Key Specifications:</span>
+                    <div className="bg-[#141a26] rounded-xl p-3 space-y-1.5 border border-slate-800/80">
+                      {inspectedProduct.specifications.map((spec, i) => (
+                        <div key={i} className="flex justify-between gap-2 border-b border-slate-800/60 pb-1 last:border-0 last:pb-0">
+                          <span className="text-slate-400">{spec.label}:</span>
+                          <span className="text-slate-200 font-medium text-right">{spec.value}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Action Buttons & Quantity Chooser */}
-              <div className="pt-4 border-t border-showroom-hairline space-y-3">
-                {/* Quantity Chooser & Valuation Preview */}
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-secondary/50 border border-border/80">
+              <div className="pt-3 border-t border-slate-800 space-y-2.5">
+                {/* Quantity Chooser & Valuation */}
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#141a26] border border-slate-800">
                   <div className="space-y-0.5">
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground block font-medium">
-                      Specify Quantity
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      Total ({modalQuantity} {modalQuantity === 1 ? 'item' : 'items'}):
                     </span>
-                    <span className="font-mono text-xs font-semibold text-foreground">
-                      ${(inspectedProduct.price * modalQuantity).toLocaleString()} USD
-                      {modalQuantity > 1 && (
-                        <span className="text-[10px] text-muted-foreground font-normal ml-1">
-                          (${inspectedProduct.price.toLocaleString()} ea)
-                        </span>
-                      )}
+                    <span className="font-bold text-sm text-white block">
+                      {(inspectedProduct.price * modalQuantity).toLocaleString()} IQD
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-2.5 py-1 shadow-2xs">
+                  <div className="flex items-center gap-2 bg-[#1b2333] border border-slate-700 rounded-lg px-2 py-1">
                     <button
                       onClick={() => setModalQuantity(prev => Math.max(1, prev - 1))}
                       disabled={modalQuantity <= 1}
-                      className="text-muted-foreground hover:text-foreground disabled:opacity-40 p-1 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                      className="text-slate-400 hover:text-white disabled:opacity-40 p-0.5 cursor-pointer disabled:cursor-not-allowed"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="text-sm font-mono font-bold min-w-[1.75rem] text-center text-foreground select-none">
+                    <span className="text-xs font-bold min-w-[1.5rem] text-center text-white select-none">
                       {modalQuantity}
                     </span>
                     <button
                       onClick={() => setModalQuantity(prev => Math.min(99, prev + 1))}
-                      className="text-muted-foreground hover:text-foreground p-1 cursor-pointer transition-colors"
+                      className="text-slate-400 hover:text-white p-0.5 cursor-pointer"
                       aria-label="Increase quantity"
                     >
                       <Plus className="h-3.5 w-3.5" />
@@ -322,82 +329,67 @@ export const ProductModal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Primary Action Button */}
+                {/* Primary Action Button (Toggle Add / Cancel) */}
                 <button
-                  onClick={handleApplySelection}
-                  className="w-full py-4 rounded-xl text-xs font-mono uppercase tracking-[0.16em] font-semibold transition-all cursor-pointer shadow-md flex items-center justify-center gap-2 active:scale-98 bg-foreground text-background hover:bg-stone-800"
+                  onClick={handleToggleSelection}
+                  className={cn(
+                    "w-full py-3 rounded-xl text-xs uppercase tracking-wider font-bold transition-all cursor-pointer shadow-md flex items-center justify-center gap-2 active:scale-98",
+                    isSelected
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40"
+                      : "bg-sky-500 hover:bg-sky-400 text-white"
+                  )}
                 >
-                  {isSelected && currentBoxItem?.quantity === modalQuantity ? (
+                  {isSelected ? (
                     <>
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>In Selection Box ({modalQuantity} {modalQuantity === 1 ? 'Piece' : 'Pieces'})</span>
-                    </>
-                  ) : isSelected ? (
-                    <>
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>Update Selection ({modalQuantity} {modalQuantity === 1 ? 'Piece' : 'Pieces'})</span>
+                      <Check className="h-4 w-4 stroke-[3]" />
+                      <span>ADDED TO BOX (CLICK TO CANCEL)</span>
                     </>
                   ) : (
                     <>
-                      <Plus className="h-4 w-4 text-primary" />
-                      <span>Add {modalQuantity > 1 ? `${modalQuantity} Pieces` : 'Piece'} to Project Box</span>
+                      <Plus className="h-4 w-4 stroke-[3]" />
+                      <span>ADD TO SHOPPING BOX ({modalQuantity})</span>
                     </>
                   )}
                 </button>
 
-                {/* Secondary Actions */}
-                <div className="flex items-center justify-between gap-2 pt-0.5">
-                  {isSelected ? (
-                    <button
-                      onClick={handleRemoveSelection}
-                      className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1.5 cursor-pointer py-1 px-1"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      <span>Remove from Box</span>
-                    </button>
-                  ) : <div />}
-
-                  <button
-                    onClick={() => {
-                      setInspectedProduct(null)
-                      setIsShoppingBoxOpen(true)
-                    }}
-                    className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 cursor-pointer py-1 px-1 ml-auto"
-                  >
-                    <ShoppingBag className="h-3.5 w-3.5" />
-                    <span>View Box &amp; Spec Sheet →</span>
-                  </button>
-                </div>
+                {/* WhatsApp Direct Buy */}
+                <button
+                  onClick={handleWhatsAppOrder}
+                  className="w-full py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/40"
+                >
+                  <MessageCircle className="h-4 w-4 text-emerald-400" />
+                  <span>Order Directly via WhatsApp</span>
+                </button>
               </div>
 
             </div>
 
           </div>
 
-          {/* Complementary Pieces Exploration */}
+          {/* Complementary Products */}
           {complementaryProducts.length > 0 && (
-            <div className="pt-6 border-t border-showroom-hairline space-y-4">
-              <div className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                Complementary Curated Pieces
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="pt-4 border-t border-slate-800 space-y-2.5">
+              <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                Related Items
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {complementaryProducts.map(comp => (
                   <div
                     key={comp.id}
                     onClick={() => setInspectedProduct(comp)}
-                    className="flex items-center gap-4 p-3 rounded-2xl bg-secondary/40 hover:bg-secondary border border-border/80 cursor-pointer transition-colors group"
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-[#141a26] hover:bg-[#192233] border border-slate-800 cursor-pointer transition-colors group"
                   >
                     <img
                       src={comp.mainImage}
                       alt={comp.name}
-                      className="w-16 h-14 rounded-xl object-cover"
+                      className="w-12 h-12 rounded-lg object-contain bg-[#0b0e14] p-1 border border-slate-800"
                     />
-                    <div className="min-w-0">
-                      <h4 className="font-serif text-base font-normal text-foreground group-hover:text-primary truncate">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs font-semibold text-slate-200 group-hover:text-sky-300 truncate">
                         {comp.name}
                       </h4>
-                      <p className="font-mono text-xs font-semibold text-foreground">
-                        ${comp.price.toLocaleString()} USD
+                      <p className="text-xs font-bold text-white pt-0.5">
+                        {comp.price.toLocaleString()} IQD
                       </p>
                     </div>
                   </div>
@@ -411,3 +403,4 @@ export const ProductModal: React.FC = () => {
     </Dialog>
   )
 }
+

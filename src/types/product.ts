@@ -27,21 +27,33 @@ export interface Product {
   id: string
   code: string
   name: string
+  brand?: string
   price: number
+  originalPrice?: number
+  currency?: string
   shortDescription: string
   mainImage: string
 
-  // Common optional showcase attributes
-  currency?: string
+  // Badges & Status Indicators
+  stockCount?: number
+  stockBadge?: string // e.g., 'Only 1 left', 'Only 2 left', 'In Stock'
+  discountAmount?: string // e.g., '-15,000 IQD'
+  discountPercent?: number | string
+  hasDiscount?: boolean
+  isNewArrival?: boolean
+  isFeatured?: boolean
+  isNew?: boolean
+  rating?: number
+  reviewCount?: number
+
+  // Common showcase attributes
   tagline?: string
   category?: ProductCategory
   tags?: string[]
   fullDescription?: string
   galleryImages?: string[]
-  availability?: 'in-stock' | 'made-to-order' | 'limited-edition' | 'pre-order' | string
+  availability?: 'in-stock' | 'low-stock' | 'out-of-stock' | 'made-to-order' | 'limited-edition' | 'pre-order' | string
   leadTime?: string
-  isFeatured?: boolean
-  isNew?: boolean
 
   // Generic and extensible specifications
   specifications?: ProductSpecification[]
@@ -54,7 +66,7 @@ export interface Product {
   designer?: string
   origin?: string
 
-  // Editorial Exhibition Hierarchy & Staging
+  // Exhibition Hierarchy & Staging
   tier?: 'tier-1' | 'tier-2' | 'tier-3'
   aspectRatio?: '4:3' | '3:4' | '16:9' | '1:1'
   curationNote?: string
@@ -68,3 +80,4 @@ export interface CategoryDefinition {
   iconName?: string
   badgeText?: string
 }
+
