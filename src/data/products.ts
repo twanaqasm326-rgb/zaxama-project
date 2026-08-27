@@ -24,10 +24,10 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '140 cm', depth: '80 cm', height: '38 cm', weight: '94 kg' },
     materials: ['Honed Roman Travertine', 'Reinforced Steel Core'],
-    mainImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85',
       'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85',
+      'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1000&q=85',
       'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
     ],
     options: [
@@ -64,10 +64,10 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '120 cm', depth: '65 cm', height: '85 cm', weight: '18 kg' },
     materials: ['Solid Brushed Brass', 'Hand-Blown Opaline Glass'],
-    mainImage: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
+      'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1000&q=85',
       'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=85',
-      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1000&q=85',
     ],
     options: [
       { id: 'opt-brass', name: 'Brushed Satin Brass', colorHex: '#d4af37' },
@@ -103,10 +103,10 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '32 cm', depth: '32 cm', height: '48 cm', weight: '7.2 kg' },
     materials: ['High-Fire Terracotta Clay', 'Volcanic Mineral Wash'],
-    mainImage: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
+      'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=85',
       'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1000&q=85',
-      'https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=1000&q=85',
     ],
     options: [
       { id: 'opt-chalk', name: 'Chalk Stone White', colorHex: '#ece6dd' },
@@ -138,9 +138,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '35 cm', depth: '35 cm', height: '75 cm', weight: '46 kg' },
     materials: ['Natural Nero Marquina Marble'],
-    mainImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
-      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=85',
+      'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
     ],
     specifications: [
       { label: 'Marble Variety', value: 'Nero Marquina Black' },
@@ -201,9 +201,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '92 cm', depth: '88 cm', height: '74 cm', weight: '29 kg' },
     materials: ['Natural Wool Bouclé', 'FSC Solid Hardwood', 'High-Density Foam'],
-    mainImage: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
-      'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1000&q=85',
+      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=85',
     ],
     options: [
       { id: 'opt-ivory', name: 'Ivory Cloud Bouclé', colorHex: '#f5f2eb' },
@@ -268,8 +268,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '12 cm', depth: '8 cm', height: '28 cm', weight: '4.5 kg ea' },
     materials: ['Natural Italian Travertine', 'Cast Brass Fitting'],
-    mainImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
+      'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=85',
       'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1000&q=85',
     ],
     specifications: [
@@ -304,6 +305,7 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     mainImage: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
       'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
+      'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1000&q=85',
     ],
     specifications: [
       { label: 'Crafting', value: 'Carved from Solid Stone Block' },
@@ -330,8 +332,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '22 cm', depth: '22 cm', height: '35 cm', weight: '4.2 kg set' },
     materials: ['Coarse Stoneware Ceramic'],
-    mainImage: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=85',
+    mainImage: 'https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=1000&q=85',
     galleryImages: [
+      'https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=1000&q=85',
       'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=85',
     ],
     specifications: [
@@ -522,6 +525,34 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     specifications: [
       { label: 'Pair Weight', value: '5.2 kg Solid Stone Pair' },
       { label: 'Protection', value: 'Velvet Lined Base' },
+    ],
+  },
+  {
+    id: 'fakhama-spotlight',
+    code: 'FHK-LGT-17',
+    name: 'Spotlight',
+    category: 'lighting',
+    price: 5,
+    currency: 'USD',
+    hasDiscount: false,
+    stockCount: 10,
+    isNewArrival: true,
+    isFeatured: false,
+    rating: 4.8,
+    reviewCount: 0,
+    shortDescription: 'Recessed COB LED downlight with high-efficiency aluminum heatsink and faceted reflector.',
+    fullDescription: 'Professional-grade recessed ceiling spotlight featuring a high-output COB LED chip, precision faceted reflector for optimal light distribution, spring-loaded orange clips for easy ceiling installation, and a finned aluminum heatsink for superior thermal management.',
+    leadTime: 'Immediate Dispatch',
+    dimensions: { width: '12 cm', depth: '12 cm', height: '10 cm' },
+    materials: ['Die-Cast Aluminum Housing', 'Faceted Glass Reflector', 'COB LED Chip'],
+    mainImage: '/images/products/spotlight.jpg',
+    galleryImages: [
+      '/images/products/spotlight.jpg',
+    ],
+    specifications: [
+      { label: 'Light Type', value: 'COB LED Recessed Downlight' },
+      { label: 'Housing', value: 'White Die-Cast Aluminum' },
+      { label: 'Mounting', value: 'Spring Clip Recessed Ceiling' },
     ],
   },
 ]

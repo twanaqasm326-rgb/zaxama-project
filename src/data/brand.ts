@@ -1,6 +1,7 @@
 export const BRAND_CONFIG = {
   name: "FAKHAMA DECOR",
   tagline: "Architectural Living & Curated Objects",
+  currency: "IQD",
   subtitle: "A digital showroom dedicated to bespoke materiality, sculptural proportions, and timeless spaces.",
   showroomAddress: "742 Al-Andalus Boulevard, Design District, Riyadh, KSA",
   contact: {

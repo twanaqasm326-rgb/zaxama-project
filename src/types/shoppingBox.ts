@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { Product, ProductOption } from './product'
 
 /**
@@ -35,10 +35,12 @@ export interface PersistedSelectionStorage {
 
 export interface ClientInformation {
   clientName?: string
+  phone?: string
+  city?: string
+  address?: string
   companyName?: string
   projectTitle?: string
   email?: string
-  phone?: string
   notes?: string
 }
 

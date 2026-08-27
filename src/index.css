@@ -228,9 +228,113 @@
   animation: dialog-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Smooth scroll behavior */
+/* Delicate, Slow & Subtle Micro-Heartbeat Flow */
+@keyframes continuous-heartbeat {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.18);
+  }
+  25% {
+    transform: scale(1.02);
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.36);
+  }
+  50% {
+    transform: scale(0.994);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.18);
+  }
+  75% {
+    transform: scale(1.014);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.28);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.18);
+  }
+}
+
+.animate-heartbeat-continuous {
+  animation: continuous-heartbeat 3s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+/* Smooth scroll behavior & global overflow guard */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Fluid responsive images, svgs, and inputs */
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+input, textarea, select {
+  max-width: 100%;
+  font-size: 16px; /* Prevents auto-zoom on iOS Safari on input focus */
+}
+@media (min-width: 640px) {
+  input, textarea, select {
+    font-size: 14px;
+  }
+}
+
+/* Typography Enhancements for Arabic & Kurdish */
+[lang="ar"] .font-sans,
+[lang="ku"] .font-sans {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cairo', 'Noto Naskh Arabic', 'Noto Sans Arabic', Roboto, sans-serif;
+  line-height: 1.55;
+}
+
+/* ==========================================================================
+   Comprehensive Mobile Responsiveness Media Queries
+   ========================================================================== */
+
+/* Tablet & Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+  /* Prevent modal / dialog overflows */
+  [data-radix-dialog-content],
+  .dialog-content {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 88vh !important;
+    padding: 1.25rem 1rem !important;
+    border-radius: 1.25rem !important;
+  }
+
+  /* Make sure flex/grid layouts stack vertically when needed */
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+
+  /* Compact button paddings for mobile */
+  button {
+    touch-action: manipulation;
+  }
+}
+
+/* Small Phone Screens (<= 480px) */
+@media (max-width: 480px) {
+  /* Reduce header spacing on tiny screens */
+  header {
+    height: 3.75rem !important;
+  }
+
+  /* Compact padding for cards & grids */
+  #catalog-section {
+    padding-top: 0.5rem !important;
+  }
+
+  /* Ensure modal images fit compact screens */
+  [data-radix-dialog-content] img {
+    max-height: 42vh;
+    object-fit: cover;
+  }
 }
 
 /* Reduced-motion accessibility */

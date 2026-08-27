@@ -3,12 +3,14 @@ import {
   FileText,
   Download,
   ExternalLink,
-  Mail,
   ArrowLeft,
   CheckCircle2,
   Loader2,
-  Sparkles,
-  ShieldCheck,
+  AlertTriangle,
+  MessageCircle,
+  User,
+  Phone,
+  MapPin,
 } from 'lucide-react'
 import {
   Dialog,
@@ -17,10 +19,13 @@ import {
   DialogTitle,
 } from '../ui/dialog'
 import { useShoppingBox } from '../../context/ShoppingBoxContext'
+import { useLanguage } from '../../context/LanguageContext'
 import { BRAND_CONFIG } from '../../data/brand'
 import { PDFDocumentData } from '../../types/pdf'
 import { generateSpecificationPDF } from '../../lib/pdfGenerator'
-import { cn } from '../../lib/utils'
+import { loadArabicFont, needsArabicFont } from '../../lib/pdfFontLoader'
+import { formatPrice } from '../../lib/helpers'
+import { getLocalizedProduct } from '../../lib/localizeProduct'
 
 export const SelectionReviewModal: React.FC = () => {
   const {
@@ -31,14 +36,18 @@ export const SelectionReviewModal: React.FC = () => {
     clientInfo,
     setClientInfo,
     exportOptions,
-    setExportOptions,
     totalCount,
     totalValuation,
   } = useShoppingBox()
+  const { t, language } = useLanguage()
 
   const [isGenerating, setIsGenerating] = useState(false)
+  const [generationError, setGenerationError] = useState<string | null>(null)
+  const [phoneError, setPhoneError] = useState<string | null>(null)
   const [generatedPdfBlobUrl, setGeneratedPdfBlobUrl] = useState<string | null>(null)
+  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null)
   const [generatedDocNumber, setGeneratedDocNumber] = useState<string | null>(null)
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null)
 
   if (!isReviewOpen) return null
 
@@ -49,362 +58,394 @@ export const SelectionReviewModal: React.FC = () => {
 
   const handleClose = () => {
     setIsReviewOpen(false)
+    setGenerationError(null)
+    setPhoneError(null)
     setGeneratedPdfBlobUrl(null)
+    setGeneratedPdfBlob(null)
     setGeneratedDocNumber(null)
+    setShareFeedback(null)
   }
 
-  const handleGeneratePDF = async () => {
+  const handleGeneratePDF = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
     if (items.length === 0) return
 
+    // Validate phone number: minimum 10 digits
+    const digitsOnly = (clientInfo.phone || '').replace(/\D/g, '')
+    if (digitsOnly.length < 10) {
+      setPhoneError(t('review.phoneError'))
+      return
+    }
+    setPhoneError(null)
+
     setIsGenerating(true)
+    setGenerationError(null)
+    setShareFeedback(null)
     try {
-      const docNum = `SPEC-2026-${Math.floor(1000 + Math.random() * 9000)}`
+      // Pre-load Arabic font if needed (cached after first load)
+      if (needsArabicFont(language)) {
+        await loadArabicFont()
+      }
+
+      const docNum = `SPEC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
       const now = new Date().toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       })
 
+      // Localize items for the invoice PDF document
+      const localizedItems = items.map(item => ({
+        ...item,
+        product: getLocalizedProduct(item.product, language),
+      }))
+
       const documentData: PDFDocumentData = {
         documentNumber: docNum,
         generatedAt: now,
         branding: {
-          companyName: BRAND_CONFIG.name,
-          tagline: BRAND_CONFIG.tagline,
+          companyName: t('brand.name'),
+          tagline: t('brand.tagline'),
           address: BRAND_CONFIG.showroomAddress,
           contactEmail: BRAND_CONFIG.contact.email,
           contactPhone: BRAND_CONFIG.contact.phone,
         },
         client: clientInfo,
-        items,
+        items: localizedItems,
         totalItems: totalCount,
         estimatedTotal: totalValuation,
         currency: 'IQD',
         options: exportOptions,
       }
 
-      const doc = await generateSpecificationPDF(documentData)
+      const doc = await generateSpecificationPDF(documentData, language)
       const blob = doc.output('blob')
       const blobUrl = URL.createObjectURL(blob)
 
+      setGeneratedPdfBlob(blob)
       setGeneratedPdfBlobUrl(blobUrl)
       setGeneratedDocNumber(docNum)
     } catch (err) {
-      console.error('Error generating PDF:', err)
+      console.error('Error generating invoice:', err)
+      setGenerationError(t('review.generationError'))
     } finally {
       setIsGenerating(false)
     }
   }
 
-  const handleDownloadAgain = () => {
-    if (!generatedDocNumber) return
+  // Combined action: Downloads the invoice AND opens it in the browser simultaneously
+  const handleDownloadAndOpenInvoice = () => {
+    if (!generatedDocNumber || !generatedPdfBlobUrl) return
+
+    // 1. Download file to user's device
     const a = document.createElement('a')
-    a.href = generatedPdfBlobUrl || ''
-    a.download = `product-specifications-${generatedDocNumber.toLowerCase()}.pdf`
+    a.href = generatedPdfBlobUrl
+    a.download = `order-invoice-${generatedDocNumber.toLowerCase()}.pdf`
+    document.body.appendChild(a)
     a.click()
+    document.body.removeChild(a)
+
+    // 2. Open invoice preview in a new tab simultaneously
+    window.open(generatedPdfBlobUrl, '_blank')
+  }
+
+  const handleSendPDFToWhatsApp = async () => {
+    if (!generatedDocNumber || !generatedPdfBlob) return
+
+    const rawPhone = clientInfo.phone || ''
+    const cleanPhone = rawPhone.replace(/[^0-9]/g, '')
+    const formattedPhone = cleanPhone.startsWith('0')
+      ? '964' + cleanPhone.slice(1)
+      : cleanPhone.startsWith('964')
+      ? cleanPhone
+      : cleanPhone.length > 6
+      ? '964' + cleanPhone
+      : (BRAND_CONFIG.contact.phone?.replace(/[^0-9]/g, '') || '9647500000000')
+
+    const fileName = `order-invoice-${generatedDocNumber.toLowerCase()}.pdf`
+    const pdfFile = new File([generatedPdfBlob], fileName, { type: 'application/pdf' })
+
+    const shareText = `📋 *${t('review.docReadyTitle')}*\n• Ref: *${generatedDocNumber}*\n• Customer: *${clientInfo.clientName || 'Customer'}*\n• Phone: ${clientInfo.phone || 'N/A'}${clientInfo.address ? `\n• Address: ${clientInfo.address}` : ''}\n• Items: ${totalCount}\n• *${t('review.totalInDinar')}:* ${formatPrice(totalValuation)}\n\n${t('brand.name')}`
+
+    // 1. Mobile: Web Share API can attach the PDF file directly to WhatsApp
+    if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+      try {
+        await navigator.share({
+          files: [pdfFile],
+          title: `Order Invoice - ${generatedDocNumber}`,
+          text: shareText,
+        })
+        setShareFeedback(t('review.waShareSuccess'))
+        return
+      } catch (err: any) {
+        if (err?.name === 'AbortError') {
+          return // User dismissed share dialog
+        }
+        console.warn('Web Share failed, falling back to direct link:', err)
+      }
+    }
+
+    // 2. Desktop fallback: Auto-download the PDF first, then open WhatsApp direct chat
+    try {
+      const downloadUrl = URL.createObjectURL(generatedPdfBlob)
+      const downloadLink = document.createElement('a')
+      downloadLink.href = downloadUrl
+      downloadLink.download = fileName
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+      URL.revokeObjectURL(downloadUrl)
+    } catch (e) {
+      console.warn('Auto-download before WhatsApp failed:', e)
+    }
+
+    // Open WhatsApp direct chat with the customer's number
+    const messageWithAttachNote = `${shareText}\n\n📎 _${t('review.waDesktopNote')}_`
+    const waUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(messageWithAttachNote)}`
+    window.open(waUrl, '_blank')
+    setShareFeedback(t('review.waShareSuccess'))
   }
 
   return (
     <Dialog open={isReviewOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-3xl w-[94vw] sm:w-full p-4 sm:p-7 max-h-[92vh] overflow-y-auto bg-[#0f141e] border-slate-800 text-slate-100 shadow-2xl rounded-3xl">
+      <DialogContent className="max-w-3xl w-[94vw] p-5 sm:p-7 max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
         
         {/* Document Ready Success View */}
         {generatedPdfBlobUrl && generatedDocNumber ? (
-          <div className="space-y-6 py-2 animate-fade-in">
-            {/* Header */}
-            <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30 shadow-xs">
-                <CheckCircle2 className="h-6 w-6" />
-              </div>
-              <div className="space-y-1">
-                <span className="text-[11px] font-mono text-sky-400 font-semibold uppercase tracking-widest">
-                  Document Generated
-                </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-white">
-                  Your Specification Sheet is Ready
-                </h3>
-                <p className="text-xs text-slate-400 max-w-md mx-auto">
-                  A high-resolution PDF with technical specifications and estimated pricing has been created.
-                </p>
-              </div>
+          <div className="space-y-5 py-3 animate-fade-in text-center">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30">
+              <CheckCircle2 className="h-7 w-7" />
             </div>
 
-            {/* Document Card Preview */}
-            <div className="bg-[#141a26] border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#1b2333] border border-slate-700 flex items-center justify-center text-sky-400">
-                    <FileText className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">
-                      {clientInfo.projectTitle || 'Product Selection & Specifications'}
-                    </h4>
-                    <span className="font-mono text-xs text-slate-400">
-                      Ref: <strong className="text-sky-300">{generatedDocNumber}</strong> • {totalCount} Items
-                    </span>
-                  </div>
-                </div>
+            <div className="space-y-1.5">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                {t('review.docReadyTitle')}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Ref: <strong className="text-sky-600 dark:text-sky-400 font-mono">{generatedDocNumber}</strong> • Total: <strong className="text-slate-900 dark:text-white">{formatPrice(totalValuation)}</strong>
+              </p>
+              {clientInfo.phone && (
+                <p className="text-xs text-emerald-600 dark:text-emerald-400/90 font-medium">
+                  {t('review.directWhatsAppConfigured')} <span className="text-slate-900 dark:text-white font-bold">{clientInfo.phone}</span>
+                </p>
+              )}
+            </div>
 
-                <div className="text-left sm:text-right">
-                  <span className="text-[10px] uppercase text-slate-400 block font-medium">
-                    Total Estimated Amount
-                  </span>
-                  <span className="font-bold text-base text-white">
-                    {totalValuation.toLocaleString()} IQD
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            {/* Action Buttons Grid */}
+            <div className="space-y-3 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                {/* 1. Combined Download & Open Invoice */}
                 <button
-                  onClick={handleDownloadAgain}
-                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white py-3 px-5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                  onClick={handleDownloadAndOpenInvoice}
+                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 hover:shadow-[0_0_16px_rgba(56,189,248,0.4)]"
+                  title={t('review.downloadAndOpen')}
                 >
-                  <Download className="h-4 w-4" />
-                  <span>Download PDF Document</span>
+                  <Download className="h-4.5 w-4.5" />
+                  <span>{t('review.downloadAndOpen')}</span>
+                  <ExternalLink className="h-3.5 w-3.5 opacity-75" />
                 </button>
 
-                <a
-                  href={generatedPdfBlobUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#1b2333] hover:bg-[#222c40] text-slate-200 border border-slate-700 py-3 px-5 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                {/* 2. Send Invoice to WhatsApp */}
+                <button
+                  onClick={handleSendPDFToWhatsApp}
+                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 border border-emerald-400/40 hover:shadow-[0_0_16px_rgba(16,185,129,0.4)]"
+                  title={t('review.sendToWhatsApp')}
                 >
-                  <ExternalLink className="h-4 w-4 text-slate-400" />
-                  <span>Open in New Tab</span>
-                </a>
+                  <MessageCircle className="h-4.5 w-4.5 fill-white/20" />
+                  <span>{t('review.sendToWhatsApp')}</span>
+                </button>
               </div>
             </div>
 
-            {/* Direct Consultation Link */}
-            <div className="bg-[#141a26] border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="space-y-0.5">
-                <span className="text-xs font-medium text-white block">
-                  Have questions about this selection?
-                </span>
-                <span className="text-xs text-slate-400">
-                  Send this specification directly to our support team for consultation.
-                </span>
-              </div>
-              <a
-                href={`mailto:${BRAND_CONFIG.contact.email}?subject=Specification%20Inquiry%20Ref%20${generatedDocNumber}`}
-                className="inline-flex items-center gap-2 text-xs text-sky-400 hover:text-sky-300 font-semibold cursor-pointer shrink-0"
-              >
-                <Mail className="h-3.5 w-3.5" />
-                <span>Contact Team</span>
-              </a>
-            </div>
+            {/* Share feedback alert if any */}
+            {shareFeedback && (
+              <p className="text-xs text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 py-1.5 px-3 rounded-lg max-w-md mx-auto">
+                {shareFeedback}
+              </p>
+            )}
 
-            {/* Return CTA */}
-            <div className="text-center pt-1">
+            <div className="pt-2">
               <button
                 onClick={handleClose}
-                className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
-                ← Return to Store
+                {t('review.returnToShowroom')}
               </button>
             </div>
           </div>
         ) : (
-          /* Selection Review & Metadata Input Form */
-          <div className="space-y-6 animate-fade-in">
+          /* User Information Form */
+          <form onSubmit={handleGeneratePDF} className="space-y-4 animate-fade-in text-left">
             
             {/* Header */}
-            <div className="space-y-1.5 border-b border-slate-800 pb-3.5">
+            <div className="space-y-1.5 border-b border-slate-200 dark:border-slate-800 pb-3.5">
               <button
+                type="button"
                 onClick={handleBackToDrawer}
-                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer mb-1"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer mb-1"
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span>Back to Cart</span>
+                <ArrowLeft className="h-4 w-4" />
+                <span>{t('review.backToShoppingBox')}</span>
               </button>
 
               <DialogHeader className="p-0 text-left">
-                <DialogTitle className="text-xl sm:text-2xl font-bold text-white">
-                  Export Specification Document
+                <DialogTitle className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  {t('review.title')}
                 </DialogTitle>
               </DialogHeader>
 
-              <p className="text-xs text-slate-400">
-                Optionally add project metadata to brand your PDF document.
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                {t('review.subtitle')}
               </p>
             </div>
 
-            {/* Main 2-Column Review Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* Inputs Grid */}
+            <div className="space-y-3.5 pt-1">
               
-              {/* Left Column: Form */}
-              <div className="md:col-span-7 space-y-3.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-sky-400 uppercase tracking-wider">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <span>Project &amp; Client Details (Optional)</span>
+              {/* Row 1: Full Name (REQUIRED) & Phone Number (REQUIRED - min 10 digits) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                    <User className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
+                    <span>{t('review.fullName')} {t('common.required')}</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder={t('review.namePlaceholder')}
+                    value={clientInfo.clientName || ''}
+                    onChange={(e) =>
+                      setClientInfo(prev => ({ ...prev, clientName: e.target.value }))
+                    }
+                    className="w-full bg-slate-50 dark:bg-[#141a26] border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all"
+                  />
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1">
-                      Recipient / Project Name
+                {/* Phone Number with 10+ digits enforcement */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
+                      <span>{t('review.phone')} {t('common.required')}</span>
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Gaming Setup / Studio"
-                      value={clientInfo.clientName || ''}
-                      onChange={(e) =>
-                        setClientInfo(prev => ({ ...prev, clientName: e.target.value }))
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                      {t('review.phoneMinDigits')}
+                    </span>
+                  </div>
+                  <input
+                    type="tel"
+                    required
+                    minLength={10}
+                    placeholder={t('review.phonePlaceholder')}
+                    value={clientInfo.phone || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setClientInfo(prev => ({ ...prev, phone: val }))
+                      const digits = val.replace(/\D/g, '')
+                      if (digits.length >= 10 && phoneError) {
+                        setPhoneError(null)
                       }
-                      className="w-full bg-[#141a26] border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div>
-                      <label className="block text-xs font-medium text-slate-300 mb-1">
-                        Company / Organization
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Esports Arena"
-                        value={clientInfo.companyName || ''}
-                        onChange={(e) =>
-                          setClientInfo(prev => ({ ...prev, companyName: e.target.value }))
-                        }
-                        className="w-full bg-[#141a26] border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-300 mb-1">
-                        Project Tag
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Season 2026 Refresh"
-                        value={clientInfo.projectTitle || ''}
-                        onChange={(e) =>
-                          setClientInfo(prev => ({ ...prev, projectTitle: e.target.value }))
-                        }
-                        className="w-full bg-[#141a26] border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1">
-                      Special Notes
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="e.g. Priority delivery and test on site."
-                      value={clientInfo.notes || ''}
-                      onChange={(e) =>
-                        setClientInfo(prev => ({ ...prev, notes: e.target.value }))
-                      }
-                      className="w-full bg-[#141a26] border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all resize-none"
-                    />
-                  </div>
-
-                  {/* Document Options */}
-                  <div className="pt-2 space-y-2 border-t border-slate-800">
-                    <label className="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={exportOptions.includePricing !== false}
-                        onChange={(e) =>
-                          setExportOptions(prev => ({ ...prev, includePricing: e.target.checked }))
-                        }
-                        className="rounded border-slate-700 bg-slate-800 text-sky-500 focus:ring-sky-500 w-4 h-4 cursor-pointer"
-                      />
-                      <span>Include Pricing Breakdown (IQD)</span>
-                    </label>
-
-                    <label className="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={exportOptions.includeSpecifications !== false}
-                        onChange={(e) =>
-                          setExportOptions(prev => ({ ...prev, includeSpecifications: e.target.checked }))
-                        }
-                        className="rounded border-slate-700 bg-slate-800 text-sky-500 focus:ring-sky-500 w-4 h-4 cursor-pointer"
-                      />
-                      <span>Include Technical Specifications</span>
-                    </label>
-                  </div>
+                    }}
+                    className={`w-full bg-slate-50 dark:bg-[#141a26] border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none transition-all ${
+                      phoneError
+                        ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/30'
+                        : 'border-slate-200 dark:border-slate-800 focus:border-sky-500'
+                    }`}
+                  />
+                  {phoneError && (
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1 font-medium">
+                      <AlertTriangle className="h-3 w-3 shrink-0" />
+                      <span>{phoneError}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Right Column: Summary */}
-              <div className="md:col-span-5 space-y-3.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                  <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
-                  <span>Items Overview</span>
-                </div>
+              {/* Row 2: City / Address (Optional) */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
+                  <span>{t('review.cityAddress')}</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('review.addressPlaceholder')}
+                  value={clientInfo.address || clientInfo.city || ''}
+                  onChange={(e) =>
+                    setClientInfo(prev => ({ ...prev, address: e.target.value, city: e.target.value }))
+                  }
+                  className="w-full bg-slate-50 dark:bg-[#141a26] border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all"
+                />
+              </div>
 
-                <div className="bg-[#141a26] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-sm">
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1 no-scrollbar">
-                    {items.map(item => (
-                      <div key={item.id} className="flex items-center justify-between text-xs pb-1.5 border-b border-slate-800 last:border-0 last:pb-0">
-                        <div className="truncate max-w-[170px]">
-                          <span className="text-white block truncate font-medium">
-                            {item.product.name}
-                          </span>
-                          <span className="text-[10px] text-slate-400">
-                            Qty: {item.quantity}
-                          </span>
-                        </div>
-                        <span className="font-bold text-white shrink-0">
-                          {(item.product.price * item.quantity).toLocaleString()} IQD
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-800 space-y-1">
-                    <div className="flex items-baseline justify-between text-xs text-slate-400">
-                      <span>Total Count</span>
-                      <span className="font-semibold text-white">{totalCount} items</span>
-                    </div>
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-xs uppercase text-slate-400 font-medium">
-                        Total Amount
-                      </span>
-                      <span className="text-base font-bold text-white">
-                        {totalValuation.toLocaleString()} IQD
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      onClick={handleGeneratePDF}
-                      disabled={isGenerating}
-                      className={cn(
-                        "w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-[0.98] cursor-pointer disabled:opacity-60"
-                      )}
-                    >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>Generating PDF...</span>
-                        </>
-                      ) : (
-                        <>
-                          <FileText className="h-4 w-4" />
-                          <span>Generate Specification PDF</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
+              {/* Row 3: Special Notes (Optional) */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  {t('review.specialNotes')}
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder={t('review.notesPlaceholder')}
+                  value={clientInfo.notes || ''}
+                  onChange={(e) =>
+                    setClientInfo(prev => ({ ...prev, notes: e.target.value }))
+                  }
+                  className="w-full bg-slate-50 dark:bg-[#141a26] border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-all resize-none"
+                />
               </div>
 
             </div>
 
-          </div>
+            {/* Total Summary Box */}
+            <div className="bg-slate-50 dark:bg-[#141a26] border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 sm:p-4 flex items-center justify-between">
+              <div>
+                <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 block uppercase font-medium">
+                  {totalCount} {totalCount === 1 ? t('review.productOrdered') : t('review.productsOrdered')}
+                </span>
+                <span className="text-xs sm:text-sm text-sky-600 dark:text-sky-300">
+                  {t('review.readyToSend')}
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase block font-medium">{t('review.totalInDinar')}</span>
+                <span className="text-base sm:text-xl font-bold text-slate-900 dark:text-white">{formatPrice(totalValuation)}</span>
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {generationError && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-300 text-xs sm:text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>{generationError}</span>
+              </div>
+            )}
+
+            {/* Submit CTA */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={isGenerating}
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer disabled:opacity-60"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>{t('review.generating')}</span>
+                  </>
+                ) : (
+                  <>
+                    <FileText className="h-4 w-4" />
+                    <span>{t('review.generateAndReady')}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+          </form>
         )}
 
       </DialogContent>
     </Dialog>
   )
 }
-

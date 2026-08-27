@@ -1,4 +1,0 @@
-{
-    "deno.enable": false,
-    "prettier.configPath": "./.prettierrc"
-}

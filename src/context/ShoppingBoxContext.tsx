@@ -3,6 +3,7 @@ import { Product, ProductOption } from '../types/product'
 import { ShoppingBoxItem, ClientInformation, PersistedSelectionStorage, PersistedSelectionItem } from '../types/shoppingBox'
 import { PDFExportOptions } from '../types/pdf'
 import { SHOWROOM_PRODUCTS } from '../data/products'
+import { getDefaultOption, clampQuantity, MAX_QUANTITY } from '../lib/helpers'
 
 interface ShoppingBoxContextType {
   items: ShoppingBoxItem[]
@@ -24,6 +25,7 @@ interface ShoppingBoxContextType {
   getItemForProduct: (productId: string, optionId?: string) => ShoppingBoxItem | undefined
   totalCount: number
   totalValuation: number
+  lastAddedTimestamp: number
   clientInfo: ClientInformation
   setClientInfo: React.Dispatch<React.SetStateAction<ClientInformation>>
   exportOptions: PDFExportOptions
@@ -92,7 +94,7 @@ function hydrateSelectionFromStorage(): ShoppingBoxItem[] {
         }
       }
 
-      const validQuantity = Math.min(99, Math.max(1, pItem.quantity || 1))
+      const validQuantity = clampQuantity(pItem.quantity)
       const optionKey = liveOption?.id || 'default'
 
       hydrated.push({
@@ -116,6 +118,7 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [items, setItems] = useState<ShoppingBoxItem[]>(() => hydrateSelectionFromStorage())
   const [isOpen, setIsOpen] = useState(false)
   const [isReviewOpen, setIsReviewOpen] = useState(false)
+  const [lastAddedTimestamp, setLastAddedTimestamp] = useState<number>(0)
   
   const [clientInfo, setClientInfo] = useState<ClientInformation>({
     clientName: '',
@@ -154,25 +157,32 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [items])
 
   const addItem = (product: Product, option?: ProductOption, quantity = 1) => {
+    setLastAddedTimestamp(Date.now())
     setItems(prev => {
-      const defaultOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+      const targetOption = option ?? getDefaultOption(product)
 
       // Check if product with matching option already exists
       const existingIdx = prev.findIndex(
-        item => item.product.id === product.id && item.selectedOption?.id === defaultOption?.id
+        item => item.product.id === product.id && (
+          (!targetOption && !item.selectedOption) ||
+          (targetOption && item.selectedOption?.id === targetOption.id)
+        )
       )
 
       if (existingIdx >= 0) {
         const updated = [...prev]
-        updated[existingIdx].quantity = Math.min(99, updated[existingIdx].quantity + quantity)
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: clampQuantity(updated[existingIdx].quantity + quantity),
+        }
         return updated
       }
 
       const newItem: ShoppingBoxItem = {
-        id: `${product.id}-${defaultOption?.id || 'default'}-${Date.now()}`,
+        id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
         product,
-        selectedOption: defaultOption,
-        quantity: Math.min(99, Math.max(1, quantity)),
+        selectedOption: targetOption,
+        quantity: clampQuantity(quantity),
         addedAt: Date.now(),
       }
 
@@ -182,17 +192,18 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const toggleItem = (product: Product, option?: ProductOption) => {
     setItems(prev => {
-      const defaultOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
-      const existing = prev.find(item => 
-        item.product.id === product.id && (defaultOption ? item.selectedOption?.id === defaultOption.id : true)
+      const targetOption = option ?? getDefaultOption(product)
+      const existing = prev.find(item =>
+        item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
       )
       if (existing) {
         return prev.filter(item => item.id !== existing.id)
       } else {
+        setLastAddedTimestamp(Date.now())
         const newItem: ShoppingBoxItem = {
-          id: `${product.id}-${defaultOption?.id || 'default'}-${Date.now()}`,
+          id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
           product,
-          selectedOption: defaultOption,
+          selectedOption: targetOption,
           quantity: 1,
           addedAt: Date.now(),
         }
@@ -202,29 +213,34 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }
 
   const setProductQuantity = (product: Product, quantity: number, option?: ProductOption) => {
-    const targetOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+    const targetOption = option ?? getDefaultOption(product)
     if (quantity <= 0) {
-      setItems(prev => prev.filter(item => 
+      setItems(prev => prev.filter(item =>
         !(item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true))
       ))
       return
     }
 
-    const validQty = Math.min(99, Math.max(1, quantity))
+    const validQty = clampQuantity(quantity)
     setItems(prev => {
       const existingIdx = prev.findIndex(
         item => item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
       )
 
       if (existingIdx >= 0) {
+        if (validQty > prev[existingIdx].quantity) {
+          setLastAddedTimestamp(Date.now())
+        }
         const updated = [...prev]
-        updated[existingIdx].quantity = validQty
-        if (targetOption) {
-          updated[existingIdx].selectedOption = targetOption
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: validQty,
+          ...(targetOption ? { selectedOption: targetOption } : {}),
         }
         return updated
       }
 
+      setLastAddedTimestamp(Date.now())
       const newItem: ShoppingBoxItem = {
         id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
         product,
@@ -237,7 +253,8 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }
 
   const incrementProductQuantity = (product: Product, option?: ProductOption) => {
-    const targetOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+    setLastAddedTimestamp(Date.now())
+    const targetOption = option ?? getDefaultOption(product)
     setItems(prev => {
       const existingIdx = prev.findIndex(
         item => item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
@@ -245,7 +262,10 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
       if (existingIdx >= 0) {
         const updated = [...prev]
-        updated[existingIdx].quantity = Math.min(99, updated[existingIdx].quantity + 1)
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: Math.min(MAX_QUANTITY, updated[existingIdx].quantity + 1),
+        }
         return updated
       }
 
@@ -261,7 +281,7 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }
 
   const decrementProductQuantity = (product: Product, option?: ProductOption) => {
-    const targetOption = option || (product.options && product.options.length > 0 ? product.options[0] : undefined)
+    const targetOption = option ?? getDefaultOption(product)
     setItems(prev => {
       const existingIdx = prev.findIndex(
         item => item.product.id === product.id && (targetOption ? item.selectedOption?.id === targetOption.id : true)
@@ -272,7 +292,10 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
           return prev.filter((_, idx) => idx !== existingIdx)
         }
         const updated = [...prev]
-        updated[existingIdx].quantity = updated[existingIdx].quantity - 1
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          quantity: updated[existingIdx].quantity - 1,
+        }
         return updated
       }
 
@@ -291,7 +314,7 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
     setItems(prev =>
       prev.map(item =>
-        item.id === itemId ? { ...item, quantity: Math.min(99, Math.max(1, quantity)) } : item
+        item.id === itemId ? { ...item, quantity: clampQuantity(quantity) } : item
       )
     )
   }
@@ -359,6 +382,7 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
         getItemForProduct,
         totalCount,
         totalValuation,
+        lastAddedTimestamp,
         clientInfo,
         setClientInfo,
         exportOptions,
