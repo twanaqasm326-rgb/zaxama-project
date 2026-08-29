@@ -18,10 +18,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const { t } = useLanguage()
 
   const sizeMap = {
-    sm: { icon: 'w-7 h-7 sm:w-8 sm:h-8', text: 'text-base sm:text-lg font-bold tracking-wider', sub: 'text-[10px]' },
-    md: { icon: 'w-8 h-8 sm:w-10 sm:h-10', text: 'text-base sm:text-2xl font-bold tracking-wider', sub: 'text-xs' },
-    lg: { icon: 'w-11 h-11 sm:w-14 sm:h-14', text: 'text-xl sm:text-3xl font-bold tracking-widest', sub: 'text-sm' },
-    hero: { icon: 'w-18 h-18 sm:w-24 sm:h-24', text: 'text-2xl sm:text-4xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
+    sm: { icon: 'w-6 h-6 sm:w-8 sm:h-8', text: 'text-sm sm:text-lg font-bold tracking-wider', sub: 'text-[10px]' },
+    md: { icon: 'w-7 h-7 sm:w-10 sm:h-10', text: 'text-xs min-[360px]:text-sm sm:text-2xl font-bold tracking-wider', sub: 'text-[10px] sm:text-xs' },
+    lg: { icon: 'w-10 h-10 sm:w-14 sm:h-14', text: 'text-lg sm:text-3xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
+    hero: { icon: 'w-16 h-16 sm:w-24 sm:h-24', text: 'text-xl sm:text-4xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
   }
 
   const { icon, text, sub } = sizeMap[size]

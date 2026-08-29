@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div className="space-y-2">
               <span className="text-xs font-mono uppercase tracking-widest text-primary font-medium block">
-                FAKHAMA DECOR • SHOWROOM RECOVERY
+                FAKHAMA DECORAT • SHOWROOM RECOVERY
               </span>
               <h2 className="font-serif text-2xl font-normal text-foreground">
                 Experience Temporarily Interrupted

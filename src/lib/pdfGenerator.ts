@@ -317,7 +317,7 @@ export async function generateSpecificationPDF(data: PDFDocumentData, language: 
     doc.setFont(fontFamily, 'normal')
     doc.setFontSize(7)
     doc.setTextColor(COLOR_MUTED[0], COLOR_MUTED[1], COLOR_MUTED[2])
-    const codeText = `${item.product.brand || 'FAKHAMA'} • Code: ${item.product.code}`
+    const codeText = `${item.product.brand || 'FAKHAMA DECORAT'} • Code: ${item.product.code}`
     doc.text(codeText, textX, y + 13)
 
     if (item.selectedOption) {
@@ -406,6 +406,6 @@ export async function generateSpecificationPDF(data: PDFDocumentData, language: 
 /**
  * Trigger download of generated PDF
  */
-export function downloadSpecificationPDF(doc: jsPDF, filename = 'fakhama-order-specification.pdf') {
+export function downloadSpecificationPDF(doc: jsPDF, filename = 'fakhama-decorat-order-specification.pdf') {
   doc.save(filename)
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react'
 import {
   Plus,
   X,
-  Minus,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
@@ -19,6 +18,7 @@ import { BRAND_CONFIG } from '../../data/brand'
 import { formatPrice, productImage, clampQuantity } from '../../lib/helpers'
 import { getLocalizedProduct } from '../../lib/localizeProduct'
 import { cn } from '../../lib/utils'
+import { QuantityStepper } from '../ui/QuantityStepper'
 
 export const ProductModal: React.FC = () => {
   const {
@@ -111,7 +111,7 @@ export const ProductModal: React.FC = () => {
         if (!open) setInspectedProduct(null)
       }}
     >
-      <DialogContent className="max-w-5xl w-[94vw] p-5 sm:p-8 max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0d121a] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
+      <DialogContent className="max-w-5xl w-[95vw] sm:w-[92vw] p-4 sm:p-8 max-h-[92vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0d121a] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
         <DialogHeader className="sr-only">
           <DialogTitle>{inspectedProduct.name}</DialogTitle>
         </DialogHeader>
@@ -228,27 +228,13 @@ export const ProductModal: React.FC = () => {
             <div className="pt-4 sm:pt-5 border-t border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2.5 sm:gap-3">
                 {/* Quantity Stepper */}
-                <div className="flex items-center gap-2 bg-slate-100 dark:bg-[#131822] border border-slate-300 dark:border-slate-700/80 rounded-xl px-2.5 sm:px-3 py-2 shrink-0">
-                  <button
-                    onClick={() => handleStepperChange(modalQuantity - 1)}
-                    disabled={modalQuantity <= 1}
-                    className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 p-0.5 cursor-pointer disabled:cursor-not-allowed transition-colors"
-                    aria-label={t('card.decrease')}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="text-xs sm:text-base font-bold min-w-[1.25rem] sm:min-w-[1.5rem] text-center text-slate-900 dark:text-white select-none">
-                    {modalQuantity}
-                  </span>
-                  <button
-                    onClick={() => handleStepperChange(modalQuantity + 1)}
-                    disabled={modalQuantity >= 99}
-                    className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 p-0.5 cursor-pointer disabled:cursor-not-allowed transition-colors"
-                    aria-label={t('card.increase')}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
+                <QuantityStepper
+                  quantity={modalQuantity}
+                  onIncrement={() => handleStepperChange(modalQuantity + 1)}
+                  onDecrement={() => handleStepperChange(modalQuantity - 1)}
+                  onChangeQuantity={(qty) => handleStepperChange(qty)}
+                  showTrashAtOne={false}
+                />
 
                 {/* Add / Cancel Toggle Button */}
                 <button

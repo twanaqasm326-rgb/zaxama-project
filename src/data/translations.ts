@@ -47,7 +47,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
   en: {
     // Brand & Header
-    'brand.name': 'FAKHAMA DECOR',
+    'brand.name': 'FAKHAMA DECORAT',
     'brand.tagline': 'Luxury Interior & Architectural Showroom',
     'header.shoppingBox': 'Shopping Box',
     'header.themeToggle': 'Switch theme mode',
@@ -90,8 +90,8 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.fullName': 'Full Name',
     'review.namePlaceholder': 'e.g. Ahmed Ali',
     'review.phone': 'WhatsApp / Phone Number',
-    'review.phonePlaceholder': 'e.g. 0750 123 4567',
-    'review.phoneMinDigits': '(Min 10 digits)',
+    'review.phonePlaceholder': 'e.g. 07501234567',
+    'review.phoneMinDigits': '(11 digits)',
     'review.cityAddress': 'City / Address (Optional)',
     'review.addressPlaceholder': 'e.g. Baghdad, Mansour',
     'review.specialNotes': 'Special Notes / Custom Requirements (Optional)',
@@ -107,7 +107,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.downloadAndOpen': 'Download & Open Invoice',
     'review.sendToWhatsApp': 'Send Invoice to WhatsApp',
     'review.returnToShowroom': '← Return to Showroom',
-    'review.phoneError': 'Please enter at least 10 digits for your phone number (e.g. 0750 123 4567).',
+    'review.phoneError': 'Please enter exactly 11 digits for your phone number (e.g. 07501234567).',
     'review.generationError': 'Could not generate invoice. Please try again.',
     'review.waShareSuccess': 'Invoice shared successfully via WhatsApp!',
     'review.waDesktopNote': 'The invoice PDF file has been downloaded. Please attach it to this chat.',
@@ -120,7 +120,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
     // WhatsApp Floating Help
     'help.floatingText': 'Contact Me',
-    'help.whatsappPreset': 'Hello FAKHAMA DECOR! I need assistance with your showroom collections.',
+    'help.whatsappPreset': 'Hello FAKHAMA DECORAT! I need assistance with your showroom collections.',
 
     // Common
     'common.required': '*',
@@ -199,7 +199,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
   ar: {
     // Brand & Header
-    'brand.name': 'فخامة للديكور',
+    'brand.name': 'فخامة للديكورات',
     'brand.tagline': 'معرض الديكور الداخلي والمعماري الفاخر',
     'header.shoppingBox': 'سلة المشتريات',
     'header.themeToggle': 'تغيير وضع المظهر',
@@ -243,7 +243,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.namePlaceholder': 'مثال: أحمد علي',
     'review.phone': 'رقم الواتساب / الهاتف',
     'review.phonePlaceholder': 'مثال: ٠٧٥٠١٢٣٤٥٦٧',
-    'review.phoneMinDigits': '(١٠ أرقام على الأقل)',
+    'review.phoneMinDigits': '(١١ رقماً بالضبط)',
     'review.cityAddress': 'المدينة / العنوان (اختياري)',
     'review.addressPlaceholder': 'مثال: بغداد، المنصور',
     'review.specialNotes': 'ملاحظات خاصة / متطلبات مخصصة (اختياري)',
@@ -259,7 +259,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.downloadAndOpen': 'تحميل وفتح الفاتورة',
     'review.sendToWhatsApp': 'إرسال الفاتورة عبر واتساب',
     'review.returnToShowroom': '← العودة إلى المعرض',
-    'review.phoneError': 'يرجى إدخال ١٠ أرقام على الأقل لرقم الهاتف (مثال: ٠٧٥٠١٢٣٤٥٦٧).',
+    'review.phoneError': 'يرجى إدخال ١١ رقماً بالضبط لرقم الهاتف (مثال: ٠٧٥٠١٢٣٤٥٦٧).',
     'review.generationError': 'تعذر إنشاء الفاتورة. يرجى المحاولة مرة أخرى.',
     'review.waShareSuccess': 'تمت مشاركة الفاتورة بنجاح عبر واتساب!',
     'review.waDesktopNote': 'تم تحميل ملف الفاتورة PDF. يرجى إرفاقه في هذه المحادثة.',
@@ -272,7 +272,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
     // WhatsApp Floating Help
     'help.floatingText': 'تواصل معي',
-    'help.whatsappPreset': 'مرحباً فخامة للديكور! أحتاج إلى مساعدة بخصوص معروضاتكم.',
+    'help.whatsappPreset': 'مرحباً فخامة للديكورات! أحتاج إلى مساعدة بخصوص معروضاتكم.',
 
     // Common
     'common.required': '*',
@@ -351,7 +351,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
   ku: {
     // Brand & Header
-    'brand.name': 'فەخامە دیکۆر',
+    'brand.name': 'فەخامە دیکۆرات',
     'brand.tagline': 'پێشانگای ناوازەی دیکۆرات و دیزاینی ناوخۆیی',
     'header.shoppingBox': 'سەبەتەی کڕین',
     'header.themeToggle': 'گۆڕینی دۆخی ڕەنگ',
@@ -424,7 +424,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
     // WhatsApp Floating Help
     'help.floatingText': 'پەیوەندیم پێوە بکە',
-    'help.whatsappPreset': 'سڵاو فەخامە دیکۆر! پێویستم بە هاوکارییە دەربارەی بەرهەمەکانتان.',
+    'help.whatsappPreset': 'سڵاو فەخامە دیکۆرات! پێویستم بە هاوکارییە دەربارەی بەرهەمەکانتان.',
 
     // Common
     'common.required': '*',
@@ -503,7 +503,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
   tr: {
     // Brand & Header
-    'brand.name': 'FAKHAMA DECOR',
+    'brand.name': 'FAKHAMA DECORAT',
     'brand.tagline': 'Lüks İç Mimari ve Tasarım Showroomu',
     'header.shoppingBox': 'Alışveriş Kutusu',
     'header.themeToggle': 'Tema modunu değiştir',
@@ -576,7 +576,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
 
     // WhatsApp Floating Help
     'help.floatingText': 'Bana Ulaşın',
-    'help.whatsappPreset': 'Merhaba FAKHAMA DECOR! Showroom koleksiyonlarınız hakkında yardıma ihtiyacım var.',
+    'help.whatsappPreset': 'Merhaba FAKHAMA DECORAT! Showroom koleksiyonlarınız hakkında yardıma ihtiyacım var.',
 
     // Common
     'common.required': '*',

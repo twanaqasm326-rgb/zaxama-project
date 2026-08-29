@@ -70,9 +70,9 @@ export const SelectionReviewModal: React.FC = () => {
     if (e) e.preventDefault()
     if (items.length === 0) return
 
-    // Validate phone number: minimum 10 digits
+    // Validate phone number: exactly 11 digits
     const digitsOnly = (clientInfo.phone || '').replace(/\D/g, '')
-    if (digitsOnly.length < 10) {
+    if (digitsOnly.length !== 11) {
       setPhoneError(t('review.phoneError'))
       return
     }
@@ -150,108 +150,77 @@ export const SelectionReviewModal: React.FC = () => {
   }
 
   const handleSendPDFToWhatsApp = async () => {
-    if (!generatedDocNumber || !generatedPdfBlob) return
+    if (!generatedDocNumber) return
 
-    const rawPhone = clientInfo.phone || ''
+    // 1. Download the PDF file to user's device so it is ready to attach
+    if (generatedPdfBlob) {
+      const fileName = `order-invoice-${generatedDocNumber.toLowerCase()}.pdf`
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(generatedPdfBlob)
+      a.download = fileName
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    }
+
+    // 2. Open WhatsApp chat directly with the showroom owner (07517447522 -> 9647517447522)
+    const rawPhone = BRAND_CONFIG.contact.whatsapp || BRAND_CONFIG.contact.phone || '07517447522'
     const cleanPhone = rawPhone.replace(/[^0-9]/g, '')
-    const formattedPhone = cleanPhone.startsWith('0')
+    const formattedShowroomPhone = cleanPhone.startsWith('0')
       ? '964' + cleanPhone.slice(1)
       : cleanPhone.startsWith('964')
       ? cleanPhone
-      : cleanPhone.length > 6
-      ? '964' + cleanPhone
-      : (BRAND_CONFIG.contact.phone?.replace(/[^0-9]/g, '') || '9647500000000')
+      : '964' + cleanPhone
 
-    const fileName = `order-invoice-${generatedDocNumber.toLowerCase()}.pdf`
-    const pdfFile = new File([generatedPdfBlob], fileName, { type: 'application/pdf' })
-
-    const shareText = `📋 *${t('review.docReadyTitle')}*\n• Ref: *${generatedDocNumber}*\n• Customer: *${clientInfo.clientName || 'Customer'}*\n• Phone: ${clientInfo.phone || 'N/A'}${clientInfo.address ? `\n• Address: ${clientInfo.address}` : ''}\n• Items: ${totalCount}\n• *${t('review.totalInDinar')}:* ${formatPrice(totalValuation)}\n\n${t('brand.name')}`
-
-    // 1. Mobile: Web Share API can attach the PDF file directly to WhatsApp
-    if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-      try {
-        await navigator.share({
-          files: [pdfFile],
-          title: `Order Invoice - ${generatedDocNumber}`,
-          text: shareText,
-        })
-        setShareFeedback(t('review.waShareSuccess'))
-        return
-      } catch (err: any) {
-        if (err?.name === 'AbortError') {
-          return // User dismissed share dialog
-        }
-        console.warn('Web Share failed, falling back to direct link:', err)
-      }
-    }
-
-    // 2. Desktop fallback: Auto-download the PDF first, then open WhatsApp direct chat
-    try {
-      const downloadUrl = URL.createObjectURL(generatedPdfBlob)
-      const downloadLink = document.createElement('a')
-      downloadLink.href = downloadUrl
-      downloadLink.download = fileName
-      document.body.appendChild(downloadLink)
-      downloadLink.click()
-      document.body.removeChild(downloadLink)
-      URL.revokeObjectURL(downloadUrl)
-    } catch (e) {
-      console.warn('Auto-download before WhatsApp failed:', e)
-    }
-
-    // Open WhatsApp direct chat with the customer's number
-    const messageWithAttachNote = `${shareText}\n\n📎 _${t('review.waDesktopNote')}_`
-    const waUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(messageWithAttachNote)}`
-    window.open(waUrl, '_blank')
+    const waUrl = `https://wa.me/${formattedShowroomPhone}`
+    window.open(waUrl, '_blank', 'noopener,noreferrer')
     setShareFeedback(t('review.waShareSuccess'))
   }
 
   return (
     <Dialog open={isReviewOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-3xl w-[94vw] p-5 sm:p-7 max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
+      <DialogContent className="max-w-3xl w-[95vw] sm:w-[92vw] p-4 sm:p-7 max-h-[92vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
         
         {/* Document Ready Success View */}
         {generatedPdfBlobUrl && generatedDocNumber ? (
-          <div className="space-y-5 py-3 animate-fade-in text-center">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30">
-              <CheckCircle2 className="h-7 w-7" />
+          <div className="space-y-4 sm:space-y-5 py-2 sm:py-3 animate-fade-in text-center">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30">
+              <CheckCircle2 className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
 
-            <div className="space-y-1.5">
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <div className="space-y-1 sm:space-y-1.5">
+              <h3 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">
                 {t('review.docReadyTitle')}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 Ref: <strong className="text-sky-600 dark:text-sky-400 font-mono">{generatedDocNumber}</strong> • Total: <strong className="text-slate-900 dark:text-white">{formatPrice(totalValuation)}</strong>
               </p>
-              {clientInfo.phone && (
-                <p className="text-xs text-emerald-600 dark:text-emerald-400/90 font-medium">
-                  {t('review.directWhatsAppConfigured')} <span className="text-slate-900 dark:text-white font-bold">{clientInfo.phone}</span>
-                </p>
-              )}
+              <p className="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-400/90 font-medium">
+                {t('review.directWhatsAppConfigured')} <span className="text-slate-900 dark:text-white font-bold">{BRAND_CONFIG.contact.phone}</span>
+              </p>
             </div>
 
             {/* Action Buttons Grid */}
-            <div className="space-y-3 pt-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+            <div className="space-y-2.5 sm:space-y-3 pt-1 sm:pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
                 {/* 1. Combined Download & Open Invoice */}
                 <button
                   onClick={handleDownloadAndOpenInvoice}
-                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 hover:shadow-[0_0_16px_rgba(56,189,248,0.4)]"
+                  className="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white py-3 sm:py-3.5 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 hover:shadow-[0_0_16px_rgba(56,189,248,0.4)]"
                   title={t('review.downloadAndOpen')}
                 >
-                  <Download className="h-4.5 w-4.5" />
+                  <Download className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
                   <span>{t('review.downloadAndOpen')}</span>
-                  <ExternalLink className="h-3.5 w-3.5 opacity-75" />
+                  <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5 opacity-75" />
                 </button>
 
                 {/* 2. Send Invoice to WhatsApp */}
                 <button
                   onClick={handleSendPDFToWhatsApp}
-                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 border border-emerald-400/40 hover:shadow-[0_0_16px_rgba(16,185,129,0.4)]"
+                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-3 sm:py-3.5 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 border border-emerald-400/40 hover:shadow-[0_0_16px_rgba(16,185,129,0.4)]"
                   title={t('review.sendToWhatsApp')}
                 >
-                  <MessageCircle className="h-4.5 w-4.5 fill-white/20" />
+                  <MessageCircle className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-white/20" />
                   <span>{t('review.sendToWhatsApp')}</span>
                 </button>
               </div>
@@ -322,28 +291,34 @@ export const SelectionReviewModal: React.FC = () => {
                   />
                 </div>
 
-                {/* Phone Number with 10+ digits enforcement */}
+                {/* Phone Number with exact 11 digits enforcement */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                       <Phone className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
                       <span>{t('review.phone')} {t('common.required')}</span>
                     </label>
-                    <span className="text-[11px] text-slate-400 dark:text-slate-500">
-                      {t('review.phoneMinDigits')}
+                    <span className={`text-[11px] font-mono transition-colors ${
+                      (clientInfo.phone || '').length === 11
+                        ? 'text-emerald-500 font-semibold'
+                        : 'text-slate-400 dark:text-slate-500'
+                    }`}>
+                      {(clientInfo.phone || '').length}/11 {t('review.phoneMinDigits')}
                     </span>
                   </div>
                   <input
                     type="tel"
                     required
-                    minLength={10}
+                    maxLength={11}
+                    minLength={11}
+                    pattern="[0-9]{11}"
                     placeholder={t('review.phonePlaceholder')}
                     value={clientInfo.phone || ''}
                     onChange={(e) => {
-                      const val = e.target.value
-                      setClientInfo(prev => ({ ...prev, phone: val }))
-                      const digits = val.replace(/\D/g, '')
-                      if (digits.length >= 10 && phoneError) {
+                      // Filter strictly to numbers and cap at 11 digits
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+                      setClientInfo(prev => ({ ...prev, phone: digits }))
+                      if (digits.length === 11 && phoneError) {
                         setPhoneError(null)
                       }
                     }}
