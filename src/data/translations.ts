@@ -119,7 +119,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'Search products, collections...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'Contact Me',
+    'help.floatingText': 'If you have a question click here',
     'help.whatsappPreset': 'Hello FAKHAMA DECORAT! I need assistance with your showroom collections.',
 
     // Common
@@ -271,7 +271,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'ابحث في المنتجات والمجموعات...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'تواصل معي',
+    'help.floatingText': 'إذا كان لديك سؤال اضغط هنا',
     'help.whatsappPreset': 'مرحباً فخامة للديكورات! أحتاج إلى مساعدة بخصوص معروضاتكم.',
 
     // Common
@@ -423,7 +423,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'گەڕان بۆ بەرهەم و کۆمەڵەکان...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'پەیوەندیم پێوە بکە',
+    'help.floatingText': 'ئەگەر پرسیارێکت هەیە لێرە کرتە بکە',
     'help.whatsappPreset': 'سڵاو فەخامە دیکۆرات! پێویستم بە هاوکارییە دەربارەی بەرهەمەکانتان.',
 
     // Common
@@ -575,7 +575,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'Ürünlerde, koleksiyonlarda arayın...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'Bana Ulaşın',
+    'help.floatingText': 'Bir sorunuz varsa buraya tıklayın',
     'help.whatsappPreset': 'Merhaba FAKHAMA DECORAT! Showroom koleksiyonlarınız hakkında yardıma ihtiyacım var.',
 
     // Common

@@ -113,7 +113,7 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
     <div
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        "inline-flex items-center gap-0.5 sm:gap-1 bg-white/95 dark:bg-[#0b0e14] border border-emerald-500/80 rounded-lg sm:rounded-xl p-0.5 sm:p-1 shadow-[0_0_10px_rgba(16,185,129,0.3)] shrink-0 select-none",
+        "inline-flex items-center gap-1 sm:gap-1.5 bg-white/95 dark:bg-[#0b0e14] border border-emerald-500/80 rounded-full p-1 sm:p-1.5 shadow-[0_0_12px_rgba(16,185,129,0.32)] shrink-0 select-none",
         className
       )}
     >
@@ -133,7 +133,7 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
         onTouchEnd={stopRepeating}
         onTouchCancel={stopRepeating}
         className={cn(
-          "w-5.5 h-5.5 sm:w-6.5 sm:h-6.5 rounded-md sm:rounded-lg flex items-center justify-center border transition-all cursor-pointer active:scale-90 touch-manipulation",
+          "w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer active:scale-90 touch-manipulation",
           isAtMin && showTrashAtOne
             ? "bg-rose-500/15 hover:bg-rose-500/30 text-rose-500 dark:text-rose-400 border-rose-500/50 hover:border-rose-400 shadow-xs"
             : "bg-white dark:bg-[#141a26] hover:bg-slate-200 dark:hover:bg-[#1f293d] text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border-slate-300 dark:border-slate-700/70 shadow-xs"
@@ -156,7 +156,7 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
         onBlur={handleInputBlur}
         onKeyDown={handleInputKeyDown}
         onClick={(e) => e.stopPropagation()}
-        className="w-5 sm:w-6 text-[11px] sm:text-xs font-bold text-center text-emerald-600 dark:text-emerald-400 bg-transparent border-0 focus:outline-none focus:bg-emerald-500/10 focus:ring-1 focus:ring-emerald-400/60 rounded p-0 m-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-text"
+        className="w-6 sm:w-7 text-xs sm:text-[13.5px] font-bold text-center text-emerald-600 dark:text-emerald-400 bg-transparent border-0 focus:outline-none focus:bg-emerald-500/10 focus:ring-1 focus:ring-emerald-400/60 rounded p-0 m-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-text"
         aria-label="Item quantity"
       />
 
@@ -176,7 +176,7 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
         }}
         onTouchEnd={stopRepeating}
         onTouchCancel={stopRepeating}
-        className="w-5.5 h-5.5 sm:w-6.5 sm:h-6.5 rounded-md sm:rounded-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white border border-emerald-400/60 shadow-sm transition-all cursor-pointer active:scale-90 hover:shadow-[0_0_10px_rgba(16,185,129,0.55)] touch-manipulation disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white border border-emerald-400/60 shadow-sm transition-all cursor-pointer active:scale-90 hover:shadow-[0_0_10px_rgba(16,185,129,0.55)] touch-manipulation disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 stroke-[3]" />
       </button>
