@@ -91,7 +91,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.namePlaceholder': 'e.g. Ahmed Ali',
     'review.phone': 'WhatsApp / Phone Number',
     'review.phonePlaceholder': 'e.g. 07501234567',
-    'review.phoneMinDigits': '(11 digits)',
+    'review.phoneMinDigits': '(10/11 digits)',
     'review.cityAddress': 'City / Address (Optional)',
     'review.addressPlaceholder': 'e.g. Baghdad, Mansour',
     'review.specialNotes': 'Special Notes / Custom Requirements (Optional)',
@@ -107,7 +107,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.downloadAndOpen': 'Download & Open Invoice',
     'review.sendToWhatsApp': 'Send Invoice to WhatsApp',
     'review.returnToShowroom': '← Return to Showroom',
-    'review.phoneError': 'Please enter exactly 11 digits for your phone number (e.g. 07501234567).',
+    'review.phoneError': 'Please enter 10 or 11 digits for your phone number (e.g. 07501234567).',
     'review.generationError': 'Could not generate invoice. Please try again.',
     'review.waShareSuccess': 'Invoice shared successfully via WhatsApp!',
     'review.waDesktopNote': 'The invoice PDF file has been downloaded. Please attach it to this chat.',
@@ -119,7 +119,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'Search products, collections...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'If you have a question click here',
+    'help.floatingText': 'If you have any questions, click here',
     'help.whatsappPreset': 'Hello FAKHAMA DECORAT! I need assistance with your showroom collections.',
 
     // Common
@@ -243,7 +243,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.namePlaceholder': 'مثال: أحمد علي',
     'review.phone': 'رقم الواتساب / الهاتف',
     'review.phonePlaceholder': 'مثال: ٠٧٥٠١٢٣٤٥٦٧',
-    'review.phoneMinDigits': '(١١ رقماً بالضبط)',
+    'review.phoneMinDigits': '(١٠/١١ رقماً)',
     'review.cityAddress': 'المدينة / العنوان (اختياري)',
     'review.addressPlaceholder': 'مثال: بغداد، المنصور',
     'review.specialNotes': 'ملاحظات خاصة / متطلبات مخصصة (اختياري)',
@@ -259,7 +259,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.downloadAndOpen': 'تحميل وفتح الفاتورة',
     'review.sendToWhatsApp': 'إرسال الفاتورة عبر واتساب',
     'review.returnToShowroom': '← العودة إلى المعرض',
-    'review.phoneError': 'يرجى إدخال ١١ رقماً بالضبط لرقم الهاتف (مثال: ٠٧٥٠١٢٣٤٥٦٧).',
+    'review.phoneError': 'يرجى إدخال ١٠ أو ١١ رقماً لرقم الهاتف (مثال: ٠٧٥٠١٢٣٤٥٦٧).',
     'review.generationError': 'تعذر إنشاء الفاتورة. يرجى المحاولة مرة أخرى.',
     'review.waShareSuccess': 'تمت مشاركة الفاتورة بنجاح عبر واتساب!',
     'review.waDesktopNote': 'تم تحميل ملف الفاتورة PDF. يرجى إرفاقه في هذه المحادثة.',
@@ -271,7 +271,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'ابحث في المنتجات والمجموعات...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'إذا كان لديك سؤال اضغط هنا',
+    'help.floatingText': 'إذا كان لديك أي سؤال، اضغط هنا',
     'help.whatsappPreset': 'مرحباً فخامة للديكورات! أحتاج إلى مساعدة بخصوص معروضاتكم.',
 
     // Common
@@ -395,7 +395,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.namePlaceholder': 'نموونە: ئەحمەد عەلی',
     'review.phone': 'ژمارەی واتسئاپ / مۆبایل',
     'review.phonePlaceholder': 'نموونە: ٠٧٥٠١٢٣٤٥٦٧',
-    'review.phoneMinDigits': '(لانی کەم ١٠ ژمارە)',
+    'review.phoneMinDigits': '(١٠/١١ ژمارە)',
     'review.cityAddress': 'شار / ناونیشان (ئارەزوومەندانە)',
     'review.addressPlaceholder': 'نموونە: هەولێر، بەختیاری',
     'review.specialNotes': 'تێبینی تایبەت / داواکاری تایبەت (ئارەزوومەندانە)',
@@ -411,7 +411,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.downloadAndOpen': 'داگرتن و کردنەوەی پسوولە',
     'review.sendToWhatsApp': 'ناردنی پسوولە بۆ واتسئاپ',
     'review.returnToShowroom': '← گەڕانەوە بۆ پێشانگا',
-    'review.phoneError': 'تکایە لانی کەم ١٠ ژمارە بنووسە بۆ مۆبایل (نموونە: ٠٧٥٠١٢٣٤٥٦٧).',
+    'review.phoneError': 'تکایە ١٠ یان ١١ ژمارە بنووسە بۆ مۆبایل (نموونە: ٠٧٥٠١٢٣٤٥٦٧).',
     'review.generationError': 'دروستکردنی پسوولە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.',
     'review.waShareSuccess': 'پسوولەکە بە سەرکەوتوویی لە واتسئاپ هاوبەش کرا!',
     'review.waDesktopNote': 'فایلی پسوولەی PDF داگیراوە. تکایە لەم چاتەدا پەیوەستی بکە و بینێرە.',
@@ -423,7 +423,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'گەڕان بۆ بەرهەم و کۆمەڵەکان...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'ئەگەر پرسیارێکت هەیە لێرە کرتە بکە',
+    'help.floatingText': 'ئەگەر پرسیارێکت هەیە، لێرە کرتە بکە',
     'help.whatsappPreset': 'سڵاو فەخامە دیکۆرات! پێویستم بە هاوکارییە دەربارەی بەرهەمەکانتان.',
 
     // Common
@@ -547,7 +547,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.namePlaceholder': 'Örn: Ahmet Yılmaz',
     'review.phone': 'WhatsApp / Telefon Numarası',
     'review.phonePlaceholder': 'Örn: 0750 123 4567',
-    'review.phoneMinDigits': '(En az 10 rakam)',
+    'review.phoneMinDigits': '(10/11 rakam)',
     'review.cityAddress': 'Şehir / Adres (İsteğe Bağlı)',
     'review.addressPlaceholder': 'Örn: Bağdat, Mansur',
     'review.specialNotes': 'Özel Notlar / Talepler (İsteğe Bağlı)',
@@ -563,7 +563,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.downloadAndOpen': 'Faturayı İndir ve Aç',
     'review.sendToWhatsApp': 'Faturayı WhatsApp ile Gönder',
     'review.returnToShowroom': '← Showrooma Dön',
-    'review.phoneError': 'Lütfen telefon numarası için en az 10 rakam girin (örn: 0750 123 4567).',
+    'review.phoneError': 'Lütfen telefon numarası için 10 veya 11 rakam girin (örn: 0750 123 4567).',
     'review.generationError': 'Fatura oluşturulamadı. Lütfen tekrar deneyin.',
     'review.waShareSuccess': 'Fatura WhatsApp üzerinden başarıyla paylaşıldı!',
     'review.waDesktopNote': 'Fatura PDF dosyası indirildi. Lütfen bu sohbete ekleyip gönderin.',
@@ -575,7 +575,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'Ürünlerde, koleksiyonlarda arayın...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'Bir sorunuz varsa buraya tıklayın',
+    'help.floatingText': 'Herhangi bir sorunuz varsa, buraya tıklayın',
     'help.whatsappPreset': 'Merhaba FAKHAMA DECORAT! Showroom koleksiyonlarınız hakkında yardıma ihtiyacım var.',
 
     // Common

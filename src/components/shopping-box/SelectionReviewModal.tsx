@@ -70,9 +70,9 @@ export const SelectionReviewModal: React.FC = () => {
     if (e) e.preventDefault()
     if (items.length === 0) return
 
-    // Validate phone number: exactly 11 digits
+    // Validate phone number: must be 10 or 11 digits
     const digitsOnly = (clientInfo.phone || '').replace(/\D/g, '')
-    if (digitsOnly.length !== 11) {
+    if (digitsOnly.length < 10 || digitsOnly.length > 11) {
       setPhoneError(t('review.phoneError'))
       return
     }
@@ -291,7 +291,7 @@ export const SelectionReviewModal: React.FC = () => {
                   />
                 </div>
 
-                {/* Phone Number with exact 11 digits enforcement */}
+                {/* Phone Number with 10 or 11 digits enforcement */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
@@ -299,7 +299,7 @@ export const SelectionReviewModal: React.FC = () => {
                       <span>{t('review.phone')} {t('common.required')}</span>
                     </label>
                     <span className={`text-[11px] font-mono transition-colors ${
-                      (clientInfo.phone || '').length === 11
+                      (clientInfo.phone || '').length >= 10 && (clientInfo.phone || '').length <= 11
                         ? 'text-emerald-500 font-semibold'
                         : 'text-slate-400 dark:text-slate-500'
                     }`}>
@@ -310,15 +310,15 @@ export const SelectionReviewModal: React.FC = () => {
                     type="tel"
                     required
                     maxLength={11}
-                    minLength={11}
-                    pattern="[0-9]{11}"
+                    minLength={10}
+                    pattern="[0-9]{10,11}"
                     placeholder={t('review.phonePlaceholder')}
                     value={clientInfo.phone || ''}
                     onChange={(e) => {
                       // Filter strictly to numbers and cap at 11 digits
                       const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
                       setClientInfo(prev => ({ ...prev, phone: digits }))
-                      if (digits.length === 11 && phoneError) {
+                      if (digits.length >= 10 && digits.length <= 11 && phoneError) {
                         setPhoneError(null)
                       }
                     }}

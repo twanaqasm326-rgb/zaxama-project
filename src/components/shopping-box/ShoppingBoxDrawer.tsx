@@ -43,19 +43,19 @@ export const ShoppingBoxDrawer: React.FC = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-3xl w-[95vw] sm:w-[92vw] p-4 sm:p-7 max-h-[90vh] sm:max-h-[88vh] overflow-y-auto bg-white dark:bg-[#0d121a] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
         
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 sm:pb-4">
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
+        {/* Header with right padding for absolute close button */}
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 sm:pb-4 pr-9 sm:pr-10">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-600 dark:text-sky-400 shrink-0">
               <ShoppingCart className="h-4.5 w-4.5 sm:h-6 sm:w-6" />
             </div>
-            <div>
+            <div className="min-w-0">
               <DialogHeader className="p-0 text-left">
-                <DialogTitle className="text-base sm:text-2xl font-bold text-slate-900 dark:text-white leading-none">
+                <DialogTitle className="text-base sm:text-2xl font-bold text-slate-900 dark:text-white leading-none truncate">
                   {t('drawer.title')}
                 </DialogTitle>
               </DialogHeader>
-              <p className="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1">
+              <p className="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 truncate">
                 {totalCount} {totalCount === 1 ? t('drawer.pieceSelected') : t('drawer.piecesSelected')}
               </p>
             </div>
@@ -64,7 +64,7 @@ export const ShoppingBoxDrawer: React.FC = () => {
           {items.length > 0 && (
             <button
               onClick={clearBox}
-              className="text-xs sm:text-sm font-semibold text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 px-2.5 sm:px-3 py-1.5 rounded-xl hover:bg-red-500/10 transition-all cursor-pointer"
+              className="text-xs sm:text-sm font-semibold text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl hover:bg-red-500/10 transition-all cursor-pointer shrink-0 ml-2"
             >
               {t('drawer.clearAll')}
             </button>
