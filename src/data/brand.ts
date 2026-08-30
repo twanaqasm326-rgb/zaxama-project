@@ -12,6 +12,7 @@ export const BRAND_CONFIG = {
   },
   social: {
     instagram: "@fakhamadecorat",
+    tiktok: "https://www.tiktok.com/@fakhama_decorat?_r=1&_t=ZS-99Jn6a2X2Qf",
     linkedin: "fakhama-decorat",
   },
   storage: {

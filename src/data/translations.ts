@@ -423,7 +423,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'catalog.searchPlaceholder': 'گەڕان بۆ بەرهەم و کۆمەڵەکان...',
 
     // WhatsApp Floating Help
-    'help.floatingText': 'ئەگەر پرسیارێکت هەیە، لێرە کرتە بکە',
+    'help.floatingText': 'ئەگەر پرسیارێکت هەیە، ئێرە دابگرە',
     'help.whatsappPreset': 'سڵاو فەخامە دیکۆرات! پێویستم بە هاوکارییە دەربارەی بەرهەمەکانتان.',
 
     // Common
