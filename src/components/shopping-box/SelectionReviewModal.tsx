@@ -272,10 +272,10 @@ export const SelectionReviewModal: React.FC = () => {
             <div className="space-y-3.5 pt-1">
               
               {/* Row 1: Full Name (REQUIRED) & Phone Number (REQUIRED - min 10 digits) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 items-start">
                 {/* Full Name */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
                     <User className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
                     <span>{t('review.fullName')} {t('common.required')}</span>
                   </label>
@@ -293,41 +293,43 @@ export const SelectionReviewModal: React.FC = () => {
 
                 {/* Phone Number with 10 or 11 digits enforcement */}
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                      <span>{t('review.phone')} {t('common.required')}</span>
-                    </label>
-                    <span className={`text-[11px] font-mono transition-colors ${
-                      (clientInfo.phone || '').length >= 10 && (clientInfo.phone || '').length <= 11
-                        ? 'text-emerald-500 font-semibold'
-                        : 'text-slate-400 dark:text-slate-500'
-                    }`}>
-                      {(clientInfo.phone || '').length}/11 {t('review.phoneMinDigits')}
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
+                    <span>{t('review.phone')} {t('common.required')}</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      required
+                      maxLength={11}
+                      minLength={10}
+                      pattern="[0-9]{10,11}"
+                      placeholder={t('review.phonePlaceholder')}
+                      value={clientInfo.phone || ''}
+                      onChange={(e) => {
+                        // Filter strictly to numbers and cap at 11 digits
+                        const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+                        setClientInfo(prev => ({ ...prev, phone: digits }))
+                        if (digits.length >= 10 && digits.length <= 11 && phoneError) {
+                          setPhoneError(null)
+                        }
+                      }}
+                      className={`w-full bg-slate-50 dark:bg-[#141a26] border rounded-xl pl-3.5 pr-14 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none transition-all ${
+                        phoneError
+                          ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/30'
+                          : 'border-slate-200 dark:border-slate-800 focus:border-sky-500'
+                      }`}
+                    />
+                    <span
+                      className={`absolute right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-mono pointer-events-none transition-colors select-none ${
+                        (clientInfo.phone || '').length >= 10 && (clientInfo.phone || '').length <= 11
+                          ? 'text-emerald-500 font-bold'
+                          : 'text-slate-400 dark:text-slate-500'
+                      }`}
+                    >
+                      {(clientInfo.phone || '').length}/11
                     </span>
                   </div>
-                  <input
-                    type="tel"
-                    required
-                    maxLength={11}
-                    minLength={10}
-                    pattern="[0-9]{10,11}"
-                    placeholder={t('review.phonePlaceholder')}
-                    value={clientInfo.phone || ''}
-                    onChange={(e) => {
-                      // Filter strictly to numbers and cap at 11 digits
-                      const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
-                      setClientInfo(prev => ({ ...prev, phone: digits }))
-                      if (digits.length >= 10 && digits.length <= 11 && phoneError) {
-                        setPhoneError(null)
-                      }
-                    }}
-                    className={`w-full bg-slate-50 dark:bg-[#141a26] border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none transition-all ${
-                      phoneError
-                        ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/30'
-                        : 'border-slate-200 dark:border-slate-800 focus:border-sky-500'
-                    }`}
-                  />
                   {phoneError && (
                     <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1 font-medium">
                       <AlertTriangle className="h-3 w-3 shrink-0" />
