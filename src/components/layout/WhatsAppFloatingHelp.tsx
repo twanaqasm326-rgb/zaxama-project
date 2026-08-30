@@ -14,9 +14,28 @@ export const WhatsAppFloatingHelp: React.FC = () => {
     <footer className="w-full relative z-10 py-5 sm:py-6 border-t border-slate-200/80 dark:border-slate-800/80 mt-auto bg-white/70 dark:bg-[#0a0e14]/70 backdrop-blur-xl">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
         
-        {/* On Mobile: WhatsApp Action Card + TikTok Icon Button */}
+        {/* Actions Container: TikTok Icon Button + WhatsApp Action Card */}
         <div className="w-full sm:w-auto order-1 sm:order-2 flex items-center gap-2 sm:gap-2.5">
           
+          {/* TikTok Account Button (Same height & style as WhatsApp button, placed on the other side) */}
+          <a
+            href="https://www.tiktok.com/@fakhama_decorat?_r=1&_t=ZS-99Jn6a2X2Qf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center justify-center px-3.5 sm:px-3.5 py-3 sm:py-2.5 rounded-2xl sm:rounded-xl bg-white dark:bg-[#131823] hover:bg-slate-100 dark:hover:bg-[#1b2333] text-slate-800 dark:text-slate-100 hover:text-rose-500 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 shadow-sm hover:shadow-[0_0_20px_rgba(244,63,94,0.25)] transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
+            title="Follow Fakhama Decorat on TikTok"
+            aria-label="Follow Fakhama Decorat on TikTok"
+          >
+            <div className="w-7 h-7 sm:w-7 sm:h-7 rounded-xl sm:rounded-lg bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/20 flex items-center justify-center text-slate-900 dark:text-white group-hover:scale-110 group-hover:bg-rose-500/25 transition-all duration-300 shadow-xs">
+              <svg
+                className="w-4 h-4 sm:w-3.5 sm:h-3.5 fill-current"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.88 2.89 2.89 0 0 1-2.89-2.88 2.89 2.89 0 0 1 2.89-2.89c.35 0 .68.07 1 .18v-3.5a6.37 6.37 0 0 0-1-.08A6.33 6.33 0 0 0 3 15.67 6.34 6.34 0 0 0 9.34 22a6.34 6.34 0 0 0 6.34-6.33V8.87a8.28 8.28 0 0 0 4.84 1.54V6.96a4.85 4.85 0 0 1-.93-.27z" />
+              </svg>
+            </div>
+          </a>
+
           {/* WhatsApp Direct Contact Button */}
           <button
             onClick={handleWhatsAppChat}
@@ -45,25 +64,6 @@ export const WhatsAppFloatingHelp: React.FC = () => {
               <ArrowRight className="h-4 w-4 rtl:rotate-180" />
             </div>
           </button>
-
-          {/* TikTok Account Button (Logo Only) */}
-          <a
-            href="https://www.tiktok.com/@fakhama_decorat?_r=1&_t=ZS-99Jn6a2X2Qf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-center w-13.5 sm:w-11 h-13.5 sm:h-10.5 rounded-2xl sm:rounded-xl bg-white dark:bg-[#131823] hover:bg-slate-100 dark:hover:bg-[#1b2333] text-slate-800 dark:text-slate-100 hover:text-rose-500 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 shadow-sm hover:shadow-[0_0_20px_rgba(244,63,94,0.25)] transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
-            title="Follow Fakhama Decorat on TikTok"
-            aria-label="Follow Fakhama Decorat on TikTok"
-          >
-            <div className="w-7 h-7 sm:w-7 sm:h-7 rounded-xl sm:rounded-lg bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/20 flex items-center justify-center text-slate-900 dark:text-white group-hover:scale-110 group-hover:bg-rose-500/25 transition-all duration-300 shadow-xs">
-              <svg
-                className="w-4 h-4 sm:w-3.5 sm:h-3.5 fill-current"
-                viewBox="0 0 24 24"
-              >
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.88 2.89 2.89 0 0 1-2.89-2.88 2.89 2.89 0 0 1 2.89-2.89c.35 0 .68.07 1 .18v-3.5a6.37 6.37 0 0 0-1-.08A6.33 6.33 0 0 0 3 15.67 6.34 6.34 0 0 0 9.34 22a6.34 6.34 0 0 0 6.34-6.33V8.87a8.28 8.28 0 0 0 4.84 1.54V6.96a4.85 4.85 0 0 1-.93-.27z" />
-              </svg>
-            </div>
-          </a>
 
         </div>
 
