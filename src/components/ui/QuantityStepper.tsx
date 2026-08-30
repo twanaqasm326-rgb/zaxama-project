@@ -25,55 +25,69 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState(String(quantity))
 
-  // Always keep internal input value in sync when external quantity updates
+  // Keep internal input value in sync when external quantity updates
   useEffect(() => {
     setInputValue(String(quantity))
   }, [quantity])
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const actionRef = useRef<() => void>(() => {})
+  // Hold-to-repeat state management
+  const holdTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const repeatIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const hasRepeatedRef = useRef<boolean>(false)
+  const activeActionRef = useRef<(() => void) | null>(null)
 
-  const stopRepeating = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
+  const stopHold = useCallback(() => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current)
+      holdTimerRef.current = null
     }
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
+    if (repeatIntervalRef.current) {
+      clearInterval(repeatIntervalRef.current)
+      repeatIntervalRef.current = null
     }
   }, [])
 
-  const startRepeating = useCallback(
-    (action: () => void) => {
-      stopRepeating()
-      actionRef.current = action
-      action() // Execute once immediately on first click/touch
+  const startHold = useCallback((action: () => void) => {
+    stopHold()
+    hasRepeatedRef.current = false
+    activeActionRef.current = action
 
-      timerRef.current = setTimeout(() => {
-        intervalRef.current = setInterval(() => {
-          actionRef.current()
-        }, 75) // Auto-repeat speed: every 75ms
-      }, 350) // Hold threshold: 350ms
-    },
-    [stopRepeating]
-  )
+    // 550ms hold delay before repeat mode begins
+    holdTimerRef.current = setTimeout(() => {
+      hasRepeatedRef.current = true
+      action() // 1st repeated increment
+      repeatIntervalRef.current = setInterval(() => {
+        if (activeActionRef.current) {
+          activeActionRef.current()
+        }
+      }, 140) // Smooth continuous cadence
+    }, 550)
+  }, [stopHold])
 
   // Clean up timers on unmount
   useEffect(() => {
-    return () => stopRepeating()
-  }, [stopRepeating])
+    return () => stopHold()
+  }, [stopHold])
 
-  const handleIncrementAction = () => {
-    const nextVal = Math.min(max, quantity + 1)
-    setInputValue(String(nextVal))
-    onIncrement()
+  const handleIncrementClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // If it was already triggered by a long-press hold, do not trigger an extra click
+    if (hasRepeatedRef.current) {
+      hasRepeatedRef.current = false
+      return
+    }
+    if (quantity < max) {
+      onIncrement()
+    }
   }
 
-  const handleDecrementAction = () => {
-    const nextVal = Math.max(min, quantity - 1)
-    setInputValue(String(nextVal))
+  const handleDecrementClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // If it was already triggered by a long-press hold, do not trigger an extra click
+    if (hasRepeatedRef.current) {
+      hasRepeatedRef.current = false
+      return
+    }
     onDecrement()
   }
 
@@ -117,27 +131,24 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
         className
       )}
     >
-      {/* Decrement / Remove button with Hold to Repeat */}
+      {/* Decrement / Remove button */}
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={handleDecrementClick}
+        onPointerDown={(e) => {
           e.stopPropagation()
-          startRepeating(handleDecrementAction)
+          startHold(onDecrement)
         }}
-        onMouseUp={stopRepeating}
-        onMouseLeave={stopRepeating}
-        onTouchStart={(e) => {
-          e.stopPropagation()
-          startRepeating(handleDecrementAction)
-        }}
-        onTouchEnd={stopRepeating}
-        onTouchCancel={stopRepeating}
+        onPointerUp={stopHold}
+        onPointerLeave={stopHold}
+        onPointerCancel={stopHold}
         className={cn(
-          "w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer active:scale-90 touch-manipulation",
+          "w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer active:scale-90 touch-manipulation select-none",
           isAtMin && showTrashAtOne
             ? "bg-rose-500/15 hover:bg-rose-500/30 text-rose-500 dark:text-rose-400 border-rose-500/50 hover:border-rose-400 shadow-xs"
             : "bg-white dark:bg-[#141a26] hover:bg-slate-200 dark:hover:bg-[#1f293d] text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border-slate-300 dark:border-slate-700/70 shadow-xs"
         )}
+        aria-label="Decrease quantity"
       >
         {isAtMin && showTrashAtOne ? (
           <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-rose-500 dark:text-rose-400" />
@@ -160,23 +171,22 @@ export const QuantityStepper: React.FC<QuantityStepperProps> = ({
         aria-label="Item quantity"
       />
 
-      {/* Increment button with Hold to Repeat */}
+      {/* Increment button */}
       <button
         type="button"
         disabled={isAtMax}
-        onMouseDown={(e) => {
+        onClick={handleIncrementClick}
+        onPointerDown={(e) => {
           e.stopPropagation()
-          if (!isAtMax) startRepeating(handleIncrementAction)
+          if (!isAtMax) {
+            startHold(onIncrement)
+          }
         }}
-        onMouseUp={stopRepeating}
-        onMouseLeave={stopRepeating}
-        onTouchStart={(e) => {
-          e.stopPropagation()
-          if (!isAtMax) startRepeating(handleIncrementAction)
-        }}
-        onTouchEnd={stopRepeating}
-        onTouchCancel={stopRepeating}
-        className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white border border-emerald-400/60 shadow-sm transition-all cursor-pointer active:scale-90 hover:shadow-[0_0_10px_rgba(16,185,129,0.55)] touch-manipulation disabled:opacity-40 disabled:cursor-not-allowed"
+        onPointerUp={stopHold}
+        onPointerLeave={stopHold}
+        onPointerCancel={stopHold}
+        className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white border border-emerald-400/60 shadow-sm transition-all cursor-pointer active:scale-90 hover:shadow-[0_0_10px_rgba(16,185,129,0.55)] touch-manipulation select-none disabled:opacity-40 disabled:cursor-not-allowed"
+        aria-label="Increase quantity"
       >
         <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 stroke-[3]" />
       </button>

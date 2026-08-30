@@ -25,6 +25,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const {
     addItem,
     updateQuantity,
+    incrementItem,
+    decrementItem,
     incrementProductQuantity,
     decrementProductQuantity,
     getItemForProduct,
@@ -46,7 +48,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleIncrement = () => {
     if (cartItem) {
-      updateQuantity(cartItem.id, cartItem.quantity + 1)
+      incrementItem(cartItem.id)
     } else {
       incrementProductQuantity(rawProduct, rawProduct.options?.[0])
     }
@@ -54,7 +56,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleDecrement = () => {
     if (cartItem) {
-      updateQuantity(cartItem.id, cartItem.quantity - 1)
+      decrementItem(cartItem.id)
     } else {
       decrementProductQuantity(rawProduct, rawProduct.options?.[0])
     }

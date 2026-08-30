@@ -18,6 +18,8 @@ interface ShoppingBoxContextType {
   decrementProductQuantity: (product: Product, option?: ProductOption) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
+  incrementItem: (itemId: string) => void
+  decrementItem: (itemId: string) => void
   updateItemOption: (itemId: string, option: ProductOption) => void
   updateItemNotes: (itemId: string, notes: string) => void
   clearBox: () => void
@@ -319,6 +321,32 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
     )
   }
 
+  const incrementItem = (itemId: string) => {
+    setLastAddedTimestamp(Date.now())
+    setItems(prev =>
+      prev.map(item =>
+        item.id === itemId
+          ? { ...item, quantity: clampQuantity(item.quantity + 1) }
+          : item
+      )
+    )
+  }
+
+  const decrementItem = (itemId: string) => {
+    setItems(prev => {
+      const target = prev.find(item => item.id === itemId)
+      if (!target) return prev
+      if (target.quantity <= 1) {
+        return prev.filter(item => item.id !== itemId)
+      }
+      return prev.map(item =>
+        item.id === itemId
+          ? { ...item, quantity: clampQuantity(item.quantity - 1) }
+          : item
+      )
+    })
+  }
+
   const updateItemOption = (itemId: string, option: ProductOption) => {
     setItems(prev =>
       prev.map(item =>
@@ -375,6 +403,8 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
         decrementProductQuantity,
         removeItem,
         updateQuantity,
+        incrementItem,
+        decrementItem,
         updateItemOption,
         updateItemNotes,
         clearBox,

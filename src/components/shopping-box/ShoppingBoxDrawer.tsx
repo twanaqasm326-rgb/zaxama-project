@@ -26,6 +26,8 @@ export const ShoppingBoxDrawer: React.FC = () => {
     totalCount,
     totalValuation,
     updateQuantity,
+    incrementItem,
+    decrementItem,
     removeItem,
     clearBox,
     setIsReviewOpen,
@@ -130,8 +132,8 @@ export const ShoppingBoxDrawer: React.FC = () => {
                       {/* Quantity Stepper */}
                       <QuantityStepper
                         quantity={item.quantity}
-                        onIncrement={() => updateQuantity(item.id, item.quantity + 1)}
-                        onDecrement={() => updateQuantity(item.id, item.quantity - 1)}
+                        onIncrement={() => incrementItem(item.id)}
+                        onDecrement={() => decrementItem(item.id)}
                         onChangeQuantity={(newQty) => updateQuantity(item.id, newQty)}
                       />
                     </div>
