@@ -18,8 +18,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const { t } = useLanguage()
 
   const sizeMap = {
-    sm: { icon: 'w-6 h-6 sm:w-8 sm:h-8', text: 'text-sm sm:text-lg font-bold tracking-wider', sub: 'text-[10px]' },
-    md: { icon: 'w-7 h-7 sm:w-10 sm:h-10', text: 'text-xs min-[360px]:text-sm sm:text-2xl font-bold tracking-wider', sub: 'text-[10px] sm:text-xs' },
+    sm: { icon: 'w-6 h-6 sm:w-8 sm:h-8', text: 'text-xs sm:text-lg font-bold tracking-wider', sub: 'text-[10px]' },
+    md: { icon: 'w-6.5 h-6.5 sm:w-10 sm:h-10', text: 'text-[11px] min-[380px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
     lg: { icon: 'w-10 h-10 sm:w-14 sm:h-14', text: 'text-lg sm:text-3xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
     hero: { icon: 'w-16 h-16 sm:w-24 sm:h-24', text: 'text-xl sm:text-4xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
   }
@@ -27,7 +27,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const { icon, text, sub } = sizeMap[size]
 
   return (
-    <div className={cn("inline-flex items-center gap-2 sm:gap-3 select-none", className)}>
+    <div className={cn("inline-flex items-center gap-1.5 sm:gap-3 select-none", className)}>
       {/* Sleek Emblem */}
       <div className={cn("relative flex items-center justify-center shrink-0", icon)}>
         {/* Glow */}
@@ -85,10 +85,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
       {/* Brand Typography */}
       {showText && (
-        <div className="flex flex-col text-left">
+        <div className="flex flex-col text-left rtl:text-right">
           <span
             className={cn(
-              "text-slate-900 dark:text-white uppercase leading-none font-sans tracking-wide transition-colors",
+              "text-slate-900 dark:text-white uppercase leading-none font-sans transition-colors whitespace-nowrap",
               text
             )}
           >
@@ -109,4 +109,3 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     </div>
   )
 }
-

@@ -17,7 +17,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
       onClick={toggleTheme}
       type="button"
       className={cn(
-        "relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border transition-all duration-200 cursor-pointer active:scale-90 shadow-sm",
+        "relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border transition-all duration-200 cursor-pointer active:scale-90 shadow-sm shrink-0",
         isDark
           ? "bg-[#141a26] hover:bg-[#1a2233] border-slate-700/80 hover:border-sky-400 text-sky-400 hover:shadow-[0_0_15px_rgba(56,189,248,0.35)]"
           : "bg-slate-100 hover:bg-slate-200/90 border-slate-300 hover:border-amber-500 text-amber-600 hover:shadow-[0_0_15px_rgba(245,158,11,0.35)]",
@@ -36,7 +36,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="flex items-center justify-center"
           >
-            <Moon className="w-4.5 h-4.5 sm:w-5 sm:h-5 stroke-[2.2] fill-sky-400/20" />
+            <Moon className="w-3.5 h-3.5 sm:w-5 sm:h-5 stroke-[2.2] fill-sky-400/20" />
           </motion.div>
         ) : (
           <motion.div
@@ -47,7 +47,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="flex items-center justify-center"
           >
-            <Sun className="w-4.5 h-4.5 sm:w-5 sm:h-5 stroke-[2.4] fill-amber-400/30" />
+            <Sun className="w-3.5 h-3.5 sm:w-5 sm:h-5 stroke-[2.4] fill-amber-400/30" />
           </motion.div>
         )}
       </AnimatePresence>
