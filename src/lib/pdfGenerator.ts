@@ -74,9 +74,9 @@ export async function generateSpecificationPDF(data: PDFDocumentData, language: 
   let fontFamily = 'helvetica'
 
   if (useArabic) {
-    const registered = registerArabicFont(doc)
-    if (registered) {
-      fontFamily = 'Amiri'
+    const registeredFont = registerArabicFont(doc)
+    if (registeredFont) {
+      fontFamily = registeredFont
     }
   }
 

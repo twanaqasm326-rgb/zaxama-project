@@ -82,7 +82,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"IBM Plex Sans Arabic"', 'system-ui', '-apple-system', 'sans-serif'],
+        arabic: ['"IBM Plex Sans Arabic"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         display: ['"Outfit"', '"Plus Jakarta Sans"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
