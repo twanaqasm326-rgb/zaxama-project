@@ -18,7 +18,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const { t } = useLanguage()
 
   const sizeMap = {
-    sm: { icon: 'w-6 h-6 sm:w-8 sm:h-8', text: 'text-xs sm:text-lg font-bold tracking-wider', sub: 'text-[10px]' },
+    sm: { icon: 'w-6 h-6 sm:w-10 sm:h-10', text: 'text-[11px] min-[380px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
     md: { icon: 'w-6.5 h-6.5 sm:w-10 sm:h-10', text: 'text-[11px] min-[380px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
     lg: { icon: 'w-10 h-10 sm:w-14 sm:h-14', text: 'text-lg sm:text-3xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
     hero: { icon: 'w-16 h-16 sm:w-24 sm:h-24', text: 'text-xl sm:text-4xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
@@ -30,14 +30,14 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     <div className={cn("inline-flex items-center gap-1.5 sm:gap-3 select-none", className)}>
       {/* Sleek Emblem */}
       <div className={cn("relative flex items-center justify-center shrink-0", icon)}>
-        {/* Glow */}
-        <div className="absolute inset-0 bg-sky-500/20 rounded-xl blur-md pointer-events-none" />
+        {/* Glow — smaller on mobile to prevent bleed */}
+        <div className="absolute inset-0 bg-sky-500/15 sm:bg-sky-500/20 rounded-lg sm:rounded-xl blur-sm sm:blur-md pointer-events-none" />
         
         <svg
           viewBox="0 0 100 100"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_2px_12px_rgba(56,189,248,0.5)] transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full drop-shadow-[0_1px_4px_rgba(14,165,233,0.2)] sm:drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)] dark:drop-shadow-[0_1px_6px_rgba(56,189,248,0.35)] dark:sm:drop-shadow-[0_2px_12px_rgba(56,189,248,0.5)] transition-transform duration-300 group-hover:scale-105"
         >
           {/* Outer Luxury Squircle Frame */}
           <rect

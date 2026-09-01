@@ -74,7 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       transition={{ duration: 0.3, ease: 'easeOut' }}
       onClick={() => setInspectedProduct(rawProduct)}
       className={cn(
-        "group relative rounded-2xl overflow-hidden p-2.5 sm:p-4.5 flex flex-col justify-between cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.015]",
+        "group relative rounded-xl sm:rounded-2xl overflow-hidden p-2 sm:p-4.5 flex flex-col justify-between cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.015]",
         "bg-white dark:bg-[#131823] hover:bg-slate-50/95 dark:hover:bg-[#161e2e]",
         "border transition-all",
         isInCart
@@ -104,7 +104,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* 1. Rich Photo Frame (Cover Fill with Subtle Glow) */}
       <div
         className={cn(
-          "relative aspect-square w-full rounded-xl bg-slate-100 dark:bg-[#080b10] overflow-hidden flex items-center justify-center border mb-2 sm:mb-3.5 transition-colors shadow-inner",
+          "relative aspect-square w-full rounded-lg sm:rounded-xl bg-slate-100 dark:bg-[#080b10] overflow-hidden flex items-center justify-center border mb-1.5 sm:mb-3.5 transition-colors shadow-inner",
           isInCart
             ? "border-emerald-400/50 dark:border-emerald-400/40"
             : "border-slate-200 dark:border-slate-800/70 group-hover:border-sky-400/40 dark:group-hover:border-sky-400/30"
@@ -144,7 +144,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Price Display and Bottom-Right Spinbutton / Action Button */}
         <div className={cn(
-          "pt-1.5 sm:pt-2 flex items-center justify-between gap-1 sm:gap-2 -mx-2.5 sm:-mx-4.5 -mb-2.5 sm:-mb-4.5 px-2.5 sm:px-4.5 pb-2.5 sm:pb-4.5 mt-1 sm:mt-1.5 rounded-b-2xl transition-all duration-300",
+          "pt-1 sm:pt-2 flex items-center justify-between gap-1 sm:gap-2 -mx-2 sm:-mx-4.5 -mb-2 sm:-mb-4.5 px-2 sm:px-4.5 pb-2 sm:pb-4.5 mt-0.5 sm:mt-1.5 rounded-b-xl sm:rounded-b-2xl transition-all duration-300",
           isInCart
             ? "bg-emerald-50/80 dark:bg-emerald-950/30 border-t border-emerald-400/40 dark:border-emerald-500/30 shadow-[inset_0_2px_8px_rgba(16,185,129,0.08)] dark:shadow-[inset_0_2px_8px_rgba(16,185,129,0.12)]"
             : "border-t border-transparent"
@@ -175,7 +175,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           ) : (
             <button
               onClick={handleQuickAdd}
-              className="inline-flex items-center gap-0.5 sm:gap-1.5 px-2 min-[360px]:px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-bold text-[10px] min-[360px]:text-xs sm:text-[13px] tracking-wider uppercase bg-sky-500 hover:bg-sky-400 text-white border border-sky-400/40 hover:shadow-[0_0_15px_rgba(56,189,248,0.45)] transition-all duration-200 cursor-pointer shadow-sm active:scale-95 shrink-0"
+              className="inline-flex items-center gap-0.5 sm:gap-1.5 px-2 min-[360px]:px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-bold text-[10px] min-[360px]:text-[11px] sm:text-[13px] tracking-wider uppercase bg-sky-500 hover:bg-sky-400 text-white border border-sky-400/40 hover:shadow-[0_0_15px_rgba(56,189,248,0.45)] transition-all duration-200 cursor-pointer shadow-sm active:scale-95 shrink-0"
               title={t('card.add')}
               aria-label={`${t('card.add')} ${product.name}`}
             >

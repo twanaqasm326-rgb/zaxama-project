@@ -227,6 +227,8 @@
   from { opacity: 1; }
   to { opacity: 0; }
 }
+
+/* Desktop: centered scale animation (sm+ screens only) */
 @keyframes dialog-show {
   from {
     opacity: 0;
@@ -248,17 +250,51 @@
   }
 }
 
+/* Mobile: bottom-sheet slide-up animation */
+@keyframes dialog-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes dialog-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
 [data-state="open"].dialog-overlay {
   animation: overlay-show 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 [data-state="closed"].dialog-overlay {
   animation: overlay-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Mobile: slide-up animation by default */
 [data-state="open"].dialog-content {
-  animation: dialog-show 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: dialog-slide-up 350ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 [data-state="closed"].dialog-content {
-  animation: dialog-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: dialog-slide-down 250ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Desktop (sm+): override with centered scale animation */
+@media (min-width: 640px) {
+  [data-state="open"].dialog-content {
+    animation: dialog-show 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [data-state="closed"].dialog-content {
+    animation: dialog-hide 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
 /* Delicate, Slow & Subtle Micro-Heartbeat Flow */
@@ -345,16 +381,6 @@ input, textarea, select {
 
 /* Tablet & Mobile Screens (<= 768px) */
 @media (max-width: 768px) {
-  /* Prevent modal / dialog overflows */
-  [data-radix-dialog-content],
-  .dialog-content {
-    width: 95vw !important;
-    max-width: 95vw !important;
-    max-height: 88vh !important;
-    padding: 1.25rem 1rem !important;
-    border-radius: 1.25rem !important;
-  }
-
   /* Make sure flex/grid layouts stack vertically when needed */
   .mobile-stack {
     flex-direction: column !important;
@@ -370,18 +396,24 @@ input, textarea, select {
 @media (max-width: 480px) {
   /* Reduce header spacing on tiny screens */
   header {
-    height: 3.75rem !important;
+    height: 3.5rem !important;
   }
 
   /* Compact padding for cards & grids */
   #catalog-section {
-    padding-top: 0.5rem !important;
+    padding-top: 0.25rem !important;
   }
+}
 
-  /* Ensure modal images fit compact screens */
-  [data-radix-dialog-content] img {
-    max-height: 42vh;
-    object-fit: cover;
+/* iOS safe area padding for bottom-sheet modals */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .dialog-content {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 640px) {
+    .dialog-content {
+      padding-bottom: 2rem;
+    }
   }
 }
 
@@ -398,3 +430,4 @@ input, textarea, select {
     scroll-behavior: auto;
   }
 }
+

@@ -28,16 +28,16 @@ export const Header: React.FC = () => {
   const hasItems = totalSelectedCount > 0
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-white/85 dark:bg-[#0c1017]/85 backdrop-blur-2xl backdrop-saturate-150 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-20 gap-2 sm:gap-4">
+    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-white/85 dark:bg-[#0c1017]/85 backdrop-blur-2xl backdrop-saturate-150 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="w-full max-w-[1920px] mx-auto px-2.5 sm:px-6 lg:px-8 flex items-center justify-between h-[3.25rem] sm:h-20 gap-1.5 sm:gap-4">
 
         {/* Left: Brand Logo & Brand Name */}
         <button
           onClick={handleLogoClick}
-          className="flex items-center group text-left rtl:text-right cursor-pointer focus:outline-none shrink min-w-0"
+          className="flex items-center group text-left rtl:text-right cursor-pointer focus:outline-none shrink min-w-0 overflow-hidden"
           aria-label="Go to home"
         >
-          <BrandLogo size="md" showText={true} />
+          <BrandLogo size="sm" showText={true} />
         </button>
 
         {/* Right Actions: Language Switcher, Theme Switcher & Shopping Box */}

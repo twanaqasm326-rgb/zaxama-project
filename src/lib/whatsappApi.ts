@@ -171,3 +171,60 @@ export async function sendPdfDocumentToWhatsApp(
     message: 'API credentials not configured yet.',
   }
 }
+
+/**
+ * Checks whether a WhatsApp gateway API (UltraMsg / Green-API) is configured
+ * with valid credentials, enabling fully automatic native PDF delivery.
+ */
+export function isWhatsAppGatewayConfigured(): boolean {
+  const instanceId =
+    import.meta.env.VITE_WHATSAPP_INSTANCE_ID ||
+    BRAND_CONFIG.whatsappApi?.instanceId
+  const token =
+    import.meta.env.VITE_WHATSAPP_TOKEN ||
+    BRAND_CONFIG.whatsappApi?.token
+  return Boolean(instanceId && token)
+}
+
+/**
+ * Checks whether the browser supports sharing files via the Web Share API (Level 2).
+ * Supported on most mobile browsers and modern desktop browsers (Windows/WhatsApp Desktop).
+ */
+export function canSharePdfFile(): boolean {
+  if (typeof navigator === 'undefined' || !navigator.share) return false
+  try {
+    const testFile = new File([new Blob(['x'])], 'test.pdf', { type: 'application/pdf' })
+    const canShare = typeof navigator.canShare === 'function' ? navigator.canShare({ files: [testFile] }) : false
+    return canShare
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Shares the PDF file natively via the Web Share API (Level 2).
+ * Opens the OS share sheet with the PDF already attached — the user picks
+ * WhatsApp and the showroom contact, and the actual file is delivered.
+ */
+export async function sharePdfFile(
+  pdfBlob: Blob,
+  fileName: string,
+  message: string
+): Promise<boolean> {
+  if (!canSharePdfFile()) return false
+
+  const file = new File([pdfBlob], fileName, { type: 'application/pdf' })
+  try {
+    await navigator.share({
+      files: [file],
+      title: fileName,
+      text: message,
+    })
+    return true
+  } catch (err) {
+    // AbortError = user dismissed the share sheet; treat as not shared but not a failure
+    if ((err as Error).name === 'AbortError') return false
+    console.error('Web Share error:', err)
+    return false
+  }
+}

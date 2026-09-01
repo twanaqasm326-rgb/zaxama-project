@@ -19,14 +19,14 @@ export const ProductCatalog: React.FC = () => {
   return (
     <section id="catalog-section" className="w-full relative min-h-screen bg-transparent">
       {/* Product Vitrine Grid Area */}
-      <div className="w-full max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-10 py-4 sm:py-8">
+      <div className="w-full max-w-[1700px] mx-auto px-2 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-8">
         {filteredProducts.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: shouldReduceMotion ? 0.01 : 0.25 }}
             className={cn(
-              "grid gap-3 sm:gap-5 lg:gap-6",
+              "grid gap-2 sm:gap-5 lg:gap-6",
               gridDensity === '5-col'
                 ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5"
                 : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4"

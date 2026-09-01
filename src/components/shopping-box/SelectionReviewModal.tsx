@@ -26,6 +26,12 @@ import { generateSpecificationPDF } from '../../lib/pdfGenerator'
 import { loadArabicFont, needsArabicFont } from '../../lib/pdfFontLoader'
 import { formatPrice } from '../../lib/helpers'
 import { getLocalizedProduct } from '../../lib/localizeProduct'
+import {
+  sendPdfDocumentToWhatsApp,
+  sharePdfFile,
+  isWhatsAppGatewayConfigured,
+  canSharePdfFile,
+} from '../../lib/whatsappApi'
 
 export const SelectionReviewModal: React.FC = () => {
   const {
@@ -48,6 +54,8 @@ export const SelectionReviewModal: React.FC = () => {
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null)
   const [generatedDocNumber, setGeneratedDocNumber] = useState<string | null>(null)
   const [shareFeedback, setShareFeedback] = useState<string | null>(null)
+  const [shareFeedbackError, setShareFeedbackError] = useState(false)
+  const [isSendingToWhatsApp, setIsSendingToWhatsApp] = useState(false)
 
   if (!isReviewOpen) return null
 
@@ -64,6 +72,8 @@ export const SelectionReviewModal: React.FC = () => {
     setGeneratedPdfBlob(null)
     setGeneratedDocNumber(null)
     setShareFeedback(null)
+    setShareFeedbackError(false)
+    setIsSendingToWhatsApp(false)
   }
 
   const handleGeneratePDF = async (e?: React.FormEvent) => {
@@ -149,21 +159,19 @@ export const SelectionReviewModal: React.FC = () => {
     window.open(generatedPdfBlobUrl, '_blank')
   }
 
-  const handleSendPDFToWhatsApp = async () => {
-    if (!generatedDocNumber) return
+  // Downloads the PDF blob to the user's device
+  const downloadPdfToDevice = (fileName: string) => {
+    if (!generatedPdfBlob) return
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(generatedPdfBlob)
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 
-    // 1. Download the PDF file to user's device so it is ready to attach
-    if (generatedPdfBlob) {
-      const fileName = `order-invoice-${generatedDocNumber.toLowerCase()}.pdf`
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(generatedPdfBlob)
-      a.download = fileName
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-    }
-
-    // 2. Open WhatsApp chat directly with the showroom owner (07517447522 -> 9647517447522)
+  // Opens a WhatsApp chat with the showroom owner (07517447522 -> 9647517447522)
+  const openShowroomWhatsAppChat = (message?: string) => {
     const rawPhone = BRAND_CONFIG.contact.whatsapp || BRAND_CONFIG.contact.phone || '07517447522'
     const cleanPhone = rawPhone.replace(/[^0-9]/g, '')
     const formattedShowroomPhone = cleanPhone.startsWith('0')
@@ -172,18 +180,78 @@ export const SelectionReviewModal: React.FC = () => {
       ? cleanPhone
       : '964' + cleanPhone
 
-    const waUrl = `https://wa.me/${formattedShowroomPhone}`
+    const waUrl = message
+      ? `https://wa.me/${formattedShowroomPhone}?text=${encodeURIComponent(message)}`
+      : `https://wa.me/${formattedShowroomPhone}`
     window.open(waUrl, '_blank', 'noopener,noreferrer')
-    setShareFeedback(t('review.waShareSuccess'))
+  }
+
+  /**
+   * 3-tier PDF delivery to WhatsApp (07517447522):
+   * 1. WhatsApp Gateway API (UltraMsg/Green-API) — fully automatic native PDF, desktop + mobile.
+   * 2. Web Share API — share sheet opens with the PDF attached, user picks WhatsApp + contact.
+   * 3. Fallback — download the PDF + open wa.me chat, user attaches manually.
+   */
+  const handleSendPDFToWhatsApp = async () => {
+    if (!generatedDocNumber || !generatedPdfBlob || isSendingToWhatsApp) return
+
+    setIsSendingToWhatsApp(true)
+    setShareFeedback(null)
+    setShareFeedbackError(false)
+
+    const fileName = `order-invoice-${generatedDocNumber.toLowerCase()}.pdf`
+    const caption = t('review.waMessageCaption')
+      .replace('{docNumber}', generatedDocNumber)
+      .replace('{clientName}', clientInfo.clientName || '')
+      .replace('{total}', formatPrice(totalValuation))
+
+    // Tier 1: WhatsApp Gateway API — sends the actual PDF file automatically
+    if (isWhatsAppGatewayConfigured()) {
+      try {
+        const result = await sendPdfDocumentToWhatsApp({
+          pdfBlob: generatedPdfBlob,
+          fileName,
+          docNumber: generatedDocNumber,
+          clientName: clientInfo.clientName,
+          clientPhone: clientInfo.phone,
+          caption,
+        })
+        if (result.success) {
+          setShareFeedback(t('review.waGatewaySuccess'))
+          setIsSendingToWhatsApp(false)
+          return
+        }
+        console.warn('WhatsApp gateway failed, falling back:', result.error)
+      } catch (err) {
+        console.warn('WhatsApp gateway error, falling back:', err)
+      }
+    }
+
+    // Tier 2: Web Share API — PDF file attached in the native share sheet
+    if (canSharePdfFile()) {
+      const shared = await sharePdfFile(generatedPdfBlob, fileName, caption)
+      if (shared) {
+        setShareFeedback(t('review.waShareSuccess'))
+        setIsSendingToWhatsApp(false)
+        return
+      }
+    }
+
+    // Tier 3: Fallback — download PDF + open WhatsApp chat for manual attach
+    downloadPdfToDevice(fileName)
+    openShowroomWhatsAppChat(caption)
+    setShareFeedback(t('review.waDesktopNote'))
+    setShareFeedbackError(false)
+    setIsSendingToWhatsApp(false)
   }
 
   return (
     <Dialog open={isReviewOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-3xl w-[95vw] sm:w-[92vw] p-4 sm:p-7 max-h-[92vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl rounded-2xl">
+      <DialogContent className="max-w-3xl w-full sm:w-[92vw] p-0 sm:p-7 max-h-[94vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f141e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xl">
         
         {/* Document Ready Success View */}
         {generatedPdfBlobUrl && generatedDocNumber ? (
-          <div className="space-y-4 sm:space-y-5 py-2 sm:py-3 animate-fade-in text-center">
+          <div className="space-y-4 sm:space-y-5 py-2 sm:py-3 animate-fade-in text-center px-4 sm:px-0">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-500/30">
               <CheckCircle2 className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
@@ -217,18 +285,32 @@ export const SelectionReviewModal: React.FC = () => {
                 {/* 2. Send Invoice to WhatsApp */}
                 <button
                   onClick={handleSendPDFToWhatsApp}
-                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-3 sm:py-3.5 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 border border-emerald-400/40 hover:shadow-[0_0_16px_rgba(16,185,129,0.4)]"
+                  disabled={isSendingToWhatsApp}
+                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-3 sm:py-3.5 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer active:scale-98 border border-emerald-400/40 hover:shadow-[0_0_16px_rgba(16,185,129,0.4)] disabled:opacity-60 disabled:cursor-wait"
                   title={t('review.sendToWhatsApp')}
                 >
-                  <MessageCircle className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-white/20" />
-                  <span>{t('review.sendToWhatsApp')}</span>
+                  {isSendingToWhatsApp ? (
+                    <>
+                      <Loader2 className="h-4 w-4 sm:h-4.5 sm:w-4.5 animate-spin" />
+                      <span>{t('review.sendingToWhatsApp')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-white/20" />
+                      <span>{t('review.sendToWhatsApp')}</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
 
             {/* Share feedback alert if any */}
             {shareFeedback && (
-              <p className="text-xs text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 py-1.5 px-3 rounded-lg max-w-md mx-auto">
+              <p className={`text-xs py-1.5 px-3 rounded-lg max-w-md mx-auto border ${
+                shareFeedbackError
+                  ? 'text-amber-600 dark:text-amber-300 bg-amber-500/10 border-amber-500/20'
+                  : 'text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/20'
+              }`}>
                 {shareFeedback}
               </p>
             )}
@@ -244,7 +326,7 @@ export const SelectionReviewModal: React.FC = () => {
           </div>
         ) : (
           /* User Information Form */
-          <form onSubmit={handleGeneratePDF} className="space-y-4 animate-fade-in text-left">
+          <form onSubmit={handleGeneratePDF} className="space-y-3.5 sm:space-y-4 animate-fade-in text-left px-4 sm:px-0 pb-2 sm:pb-0">
             
             {/* Header */}
             <div className="space-y-1.5 border-b border-slate-200 dark:border-slate-800 pb-3.5">

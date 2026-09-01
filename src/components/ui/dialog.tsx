@@ -32,13 +32,19 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-card p-6 md:p-8 shadow-modal rounded-2xl max-h-[90vh] overflow-y-auto",
+        // Mobile: bottom-sheet that slides up, full width, rounded top corners
+        "dialog-content fixed z-50 grid w-full border border-border bg-card shadow-modal overflow-y-auto",
+        "inset-x-0 bottom-0 max-h-[94vh] rounded-t-2xl p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] gap-3",
+        // sm+: centered modal, classic dialog positioning
+        "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] sm:bottom-auto sm:max-w-4xl sm:rounded-2xl sm:max-h-[90vh] sm:p-6 md:p-8 sm:gap-4",
         className
       )}
       {...props}
     >
+      {/* Mobile drag handle indicator */}
+      <div className="sm:hidden w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600 mx-auto shrink-0 -mt-1 mb-1" />
       {children}
-      <DialogPrimitive.Close className="absolute right-2 top-2 sm:right-3.5 sm:top-3.5 h-7 w-7 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-muted-foreground transition-all hover:bg-secondary hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none cursor-pointer z-10">
+      <DialogPrimitive.Close className="absolute right-2.5 top-2.5 sm:right-3.5 sm:top-3.5 h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-muted-foreground transition-all hover:bg-secondary hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none cursor-pointer z-10 bg-slate-100/80 dark:bg-slate-800/80 sm:bg-transparent dark:sm:bg-transparent">
         <X className="h-4 w-4 sm:h-5 sm:w-5" />
         <span className="sr-only">Close inspection</span>
       </DialogPrimitive.Close>

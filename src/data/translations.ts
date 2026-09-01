@@ -111,6 +111,9 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.generationError': 'Could not generate invoice. Please try again.',
     'review.waShareSuccess': 'Invoice shared successfully via WhatsApp!',
     'review.waDesktopNote': 'The invoice PDF file has been downloaded. Please attach it to this chat.',
+    'review.waGatewaySuccess': 'Invoice PDF sent directly to WhatsApp!',
+    'review.sendingToWhatsApp': 'Sending to WhatsApp...',
+    'review.waMessageCaption': 'Invoice {docNumber} from {clientName} — Total: {total}',
 
     // Catalog & Filters
     'catalog.noProducts': 'No products found',
@@ -263,6 +266,9 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.generationError': 'تعذر إنشاء الفاتورة. يرجى المحاولة مرة أخرى.',
     'review.waShareSuccess': 'تمت مشاركة الفاتورة بنجاح عبر واتساب!',
     'review.waDesktopNote': 'تم تحميل ملف الفاتورة PDF. يرجى إرفاقه في هذه المحادثة.',
+    'review.waGatewaySuccess': 'تم إرسال ملف الفاتورة PDF مباشرة عبر واتساب!',
+    'review.sendingToWhatsApp': 'جارٍ الإرسال عبر واتساب...',
+    'review.waMessageCaption': 'فاتورة {docNumber} من {clientName} — الإجمالي: {total}',
 
     // Catalog & Filters
     'catalog.noProducts': 'لم يتم العثور على منتجات',
@@ -415,6 +421,9 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.generationError': 'دروستکردنی پسوولە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.',
     'review.waShareSuccess': 'پسوولەکە بە سەرکەوتوویی لە واتسئاپ هاوبەش کرا!',
     'review.waDesktopNote': 'فایلی پسوولەی PDF داگیراوە. تکایە لەم چاتەدا پەیوەستی بکە و بینێرە.',
+    'review.waGatewaySuccess': 'فایلی پسوولەی PDF ڕاستەوخۆ بۆ واتسئاپ نێردرا!',
+    'review.sendingToWhatsApp': 'ناردن بۆ واتسئاپ...',
+    'review.waMessageCaption': 'پسوولەی {docNumber} لە {clientName} — کۆی گشتی: {total}',
 
     // Catalog & Filters
     'catalog.noProducts': 'هیچ بەرهەمێک نەدۆزرایەوە',
@@ -567,6 +576,9 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.generationError': 'Fatura oluşturulamadı. Lütfen tekrar deneyin.',
     'review.waShareSuccess': 'Fatura WhatsApp üzerinden başarıyla paylaşıldı!',
     'review.waDesktopNote': 'Fatura PDF dosyası indirildi. Lütfen bu sohbete ekleyip gönderin.',
+    'review.waGatewaySuccess': 'Fatura PDF dosyası doğrudan WhatsApp’a gönderildi!',
+    'review.sendingToWhatsApp': 'WhatsApp’a gönderiliyor...',
+    'review.waMessageCaption': '{clientName} adına {docNumber} numaralı fatura — Toplam: {total}',
 
     // Catalog & Filters
     'catalog.noProducts': 'Ürün bulunamadı',
