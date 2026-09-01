@@ -394,11 +394,6 @@ input, textarea, select {
 
 /* Small Phone Screens (<= 480px) */
 @media (max-width: 480px) {
-  /* Reduce header spacing on tiny screens */
-  header {
-    height: 3.5rem !important;
-  }
-
   /* Compact padding for cards & grids */
   #catalog-section {
     padding-top: 0.25rem !important;

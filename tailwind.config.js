@@ -14,6 +14,23 @@ export default {
       },
     },
     extend: {
+      spacing: {
+        // Fractional & extended spacing steps used across the showroom
+        '0.2': '0.075rem',
+        '2.8': '0.7rem',
+        '3.8': '0.95rem',
+        '3.5': '0.875rem',
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+        '6.5': '1.625rem',
+        '13': '3.25rem',
+        '18': '4.5rem',
+        '50': '12.5rem',
+      },
+      scale: {
+        '98': '0.98',
+        '108': '1.08',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

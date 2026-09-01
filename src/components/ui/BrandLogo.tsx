@@ -18,8 +18,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const { t } = useLanguage()
 
   const sizeMap = {
-    sm: { icon: 'w-6 h-6 sm:w-10 sm:h-10', text: 'text-[11px] min-[380px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
-    md: { icon: 'w-6.5 h-6.5 sm:w-10 sm:h-10', text: 'text-[11px] min-[380px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
+    sm: { icon: 'w-6 h-6 min-[380px]:w-8 min-[380px]:h-8 sm:w-10 sm:h-10', text: 'hidden min-[380px]:block text-[11px] min-[420px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
+    md: { icon: 'w-6.5 h-6.5 min-[380px]:w-8 min-[380px]:h-8 sm:w-10 sm:h-10', text: 'hidden min-[380px]:block text-[11px] min-[420px]:text-xs sm:text-xl md:text-2xl font-bold tracking-tight sm:tracking-wider', sub: 'text-[10px] sm:text-xs' },
     lg: { icon: 'w-10 h-10 sm:w-14 sm:h-14', text: 'text-lg sm:text-3xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
     hero: { icon: 'w-16 h-16 sm:w-24 sm:h-24', text: 'text-xl sm:text-4xl font-bold tracking-widest', sub: 'text-xs sm:text-sm' },
   }

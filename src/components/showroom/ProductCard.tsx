@@ -151,7 +151,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}>
           <div className="flex items-baseline min-w-0">
             <span className={cn(
-              "font-sans font-bold text-[11px] min-[360px]:text-xs sm:text-[16px] tracking-tight transition-colors duration-300",
+              "font-sans font-bold text-[11px] min-[360px]:text-xs sm:text-[16px] tracking-tight transition-colors duration-300 truncate",
               isInCart
                 ? "text-emerald-700 dark:text-emerald-300"
                 : "text-slate-900 dark:text-white"
