@@ -105,7 +105,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'review.docReadyTitle': 'Invoice Document Ready',
     'review.directWhatsAppConfigured': 'Direct WhatsApp delivery configured for:',
     'review.downloadAndOpen': 'Download & Open Invoice',
-    'review.sendToWhatsApp': 'Send Invoice to WhatsApp',
+    'review.sendToWhatsApp': "Send Invoice to What's up",
     'review.returnToShowroom': '← Return to Showroom',
     'review.phoneError': 'Please enter 10 or 11 digits for your phone number (e.g. 07501234567).',
     'review.generationError': 'Could not generate invoice. Please try again.',

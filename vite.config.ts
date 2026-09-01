@@ -5,6 +5,12 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    allowedHosts: [
+      // Allow Cloudflare quick-tunnel testing (temporary https domain for mobile testing)
+      '.trycloudflare.com',
+    ],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
