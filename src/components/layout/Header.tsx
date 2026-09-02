@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
   const hasItems = totalSelectedCount > 0
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-white/85 dark:bg-[#0c1017]/85 backdrop-blur-2xl backdrop-saturate-150 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-white/85 dark:bg-[#0c1017]/85 backdrop-blur-2xl backdrop-saturate-150 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
       <div className="w-full max-w-[1920px] mx-auto px-2.5 sm:px-6 lg:px-8 flex items-center justify-between h-[3.25rem] sm:h-20 gap-1.5 sm:gap-4">
 
         {/* Left: Brand Logo & Brand Name */}

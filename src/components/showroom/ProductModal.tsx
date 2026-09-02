@@ -15,7 +15,7 @@ import { useShowroom } from '../../context/ShowroomContext'
 import { useShoppingBox } from '../../context/ShoppingBoxContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { BRAND_CONFIG } from '../../data/brand'
-import { formatPrice, productImage, clampQuantity } from '../../lib/helpers'
+import { formatPrice, productImage, clampQuantity, getDefaultOption } from '../../lib/helpers'
 import { getLocalizedProduct } from '../../lib/localizeProduct'
 import { cn } from '../../lib/utils'
 import { QuantityStepper } from '../ui/QuantityStepper'
@@ -96,12 +96,8 @@ export const ProductModal: React.FC = () => {
     if (isSelected && currentBoxItem) {
       removeItem(currentBoxItem.id)
     } else if (rawProduct) {
-      addItem(rawProduct, productOptionFallback(rawProduct), modalQuantity)
+      addItem(rawProduct, getDefaultOption(rawProduct), modalQuantity)
     }
-  }
-
-  const productOptionFallback = (prod: any) => {
-    return prod.options && prod.options.length > 0 ? prod.options[0] : undefined
   }
 
   return (

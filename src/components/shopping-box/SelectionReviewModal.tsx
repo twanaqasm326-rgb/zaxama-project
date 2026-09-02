@@ -23,7 +23,7 @@ import { useLanguage } from '../../context/LanguageContext'
 import { BRAND_CONFIG } from '../../data/brand'
 import { PDFDocumentData } from '../../types/pdf'
 import { generateSpecificationPDF } from '../../lib/pdfGenerator'
-import { loadArabicFont, needsArabicFont } from '../../lib/pdfFontLoader'
+import { loadArabicFont, loadLatinFont, needsArabicFont, needsLatinFont } from '../../lib/pdfFontLoader'
 import { formatPrice } from '../../lib/helpers'
 import { getLocalizedProduct } from '../../lib/localizeProduct'
 import {
@@ -80,8 +80,11 @@ export const SelectionReviewModal: React.FC = () => {
     if (e) e.preventDefault()
     if (items.length === 0) return
 
-    // Validate phone number: must be 10 or 11 digits
-    const digitsOnly = (clientInfo.phone || '').replace(/\D/g, '')
+    // Validate phone number: must be 10 or 11 digits (Arabic-Indic digits normalized)
+    const digitsOnly = (clientInfo.phone || '')
+      .replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660))
+      .replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 0x06F0))
+      .replace(/\D/g, '')
     if (digitsOnly.length < 10 || digitsOnly.length > 11) {
       setPhoneError(t('review.phoneError'))
       return
@@ -92,9 +95,11 @@ export const SelectionReviewModal: React.FC = () => {
     setGenerationError(null)
     setShareFeedback(null)
     try {
-      // Pre-load Arabic font if needed (cached after first load)
+      // Pre-load the required PDF font (cached after first load)
       if (needsArabicFont(language)) {
         await loadArabicFont()
+      } else if (needsLatinFont(language)) {
+        await loadLatinFont()
       }
 
       const docNum = `SPEC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
@@ -389,8 +394,12 @@ export const SelectionReviewModal: React.FC = () => {
                       placeholder={t('review.phonePlaceholder')}
                       value={clientInfo.phone || ''}
                       onChange={(e) => {
-                        // Filter strictly to numbers and cap at 11 digits
-                        const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+                        // Normalize Arabic-Indic (٠-٩) and Persian (۰-۹) digits to Latin 0-9,
+                        // then filter strictly to numbers and cap at 11 digits
+                        const normalized = e.target.value
+                          .replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660))
+                          .replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 0x06F0))
+                        const digits = normalized.replace(/\D/g, '').slice(0, 11)
                         setClientInfo(prev => ({ ...prev, phone: digits }))
                         if (digits.length >= 10 && digits.length <= 11 && phoneError) {
                           setPhoneError(null)

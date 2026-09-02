@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react'
+﻿import React, { createContext, useContext, useState, useMemo, useEffect } from 'react'
 import { Product, ProductOption } from '../types/product'
 import { ShoppingBoxItem, ClientInformation, PersistedSelectionStorage, PersistedSelectionItem } from '../types/shoppingBox'
 import { PDFExportOptions } from '../types/pdf'
@@ -27,7 +27,6 @@ interface ShoppingBoxContextType {
   getItemForProduct: (productId: string, optionId?: string) => ShoppingBoxItem | undefined
   totalCount: number
   totalValuation: number
-  lastAddedTimestamp: number
   clientInfo: ClientInformation
   setClientInfo: React.Dispatch<React.SetStateAction<ClientInformation>>
   exportOptions: PDFExportOptions
@@ -120,7 +119,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [items, setItems] = useState<ShoppingBoxItem[]>(() => hydrateSelectionFromStorage())
   const [isOpen, setIsOpen] = useState(false)
   const [isReviewOpen, setIsReviewOpen] = useState(false)
-  const [lastAddedTimestamp, setLastAddedTimestamp] = useState<number>(0)
   
   const [clientInfo, setClientInfo] = useState<ClientInformation>({
     clientName: '',
@@ -159,7 +157,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [items])
 
   const addItem = (product: Product, option?: ProductOption, quantity = 1) => {
-    setLastAddedTimestamp(Date.now())
     setItems(prev => {
       const targetOption = option ?? getDefaultOption(product)
 
@@ -201,7 +198,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
       if (existing) {
         return prev.filter(item => item.id !== existing.id)
       } else {
-        setLastAddedTimestamp(Date.now())
         const newItem: ShoppingBoxItem = {
           id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
           product,
@@ -231,7 +227,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
       if (existingIdx >= 0) {
         if (validQty > prev[existingIdx].quantity) {
-          setLastAddedTimestamp(Date.now())
         }
         const updated = [...prev]
         updated[existingIdx] = {
@@ -241,8 +236,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
         return updated
       }
-
-      setLastAddedTimestamp(Date.now())
       const newItem: ShoppingBoxItem = {
         id: `${product.id}-${targetOption?.id || 'default'}-${Date.now()}`,
         product,
@@ -255,7 +248,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }
 
   const incrementProductQuantity = (product: Product, option?: ProductOption) => {
-    setLastAddedTimestamp(Date.now())
     const targetOption = option ?? getDefaultOption(product)
     setItems(prev => {
       const existingIdx = prev.findIndex(
@@ -322,7 +314,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }
 
   const incrementItem = (itemId: string) => {
-    setLastAddedTimestamp(Date.now())
     setItems(prev =>
       prev.map(item =>
         item.id === itemId
@@ -412,7 +403,6 @@ export const ShoppingBoxProvider: React.FC<{ children: React.ReactNode }> = ({ c
         getItemForProduct,
         totalCount,
         totalValuation,
-        lastAddedTimestamp,
         clientInfo,
         setClientInfo,
         exportOptions,

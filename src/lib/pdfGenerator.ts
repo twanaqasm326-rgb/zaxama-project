@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf'
 import { PDFDocumentData } from '../types/pdf'
 import { BRAND_CONFIG } from '../data/brand'
-import { registerArabicFont, needsArabicFont } from './pdfFontLoader'
+import { registerArabicFont, registerLatinFont, needsArabicFont, needsLatinFont } from './pdfFontLoader'
 
 /**
  * Loads an image from a URL with timeout and converts it into a Base64 Data URL for jsPDF.
@@ -70,11 +70,20 @@ export async function generateSpecificationPDF(data: PDFDocumentData, language: 
   })
 
   // Determine which font family to use based on language
+  // Arabic/Kurdish use the Arabic font; Turkish needs the extended Latin
+  // font (Plus Jakarta Sans) because jsPDF's built-in helvetica cannot
+  // encode ş ğ ı İ; English falls back to helvetica safely.
   const useArabic = needsArabicFont(language)
+  const useExtendedLatin = needsLatinFont(language)
   let fontFamily = 'helvetica'
 
   if (useArabic) {
     const registeredFont = registerArabicFont(doc)
+    if (registeredFont) {
+      fontFamily = registeredFont
+    }
+  } else if (useExtendedLatin) {
+    const registeredFont = registerLatinFont(doc)
     if (registeredFont) {
       fontFamily = registeredFont
     }

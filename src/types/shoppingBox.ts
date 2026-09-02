@@ -1,5 +1,4 @@
-﻿import React from 'react'
-import { Product, ProductOption } from './product'
+﻿import { Product, ProductOption } from './product'
 
 /**
  * Live hydrated in-memory selection item referencing active catalog product
@@ -42,28 +41,4 @@ export interface ClientInformation {
   projectTitle?: string
   email?: string
   notes?: string
-}
-
-export interface ShoppingBoxContextType {
-  items: ShoppingBoxItem[]
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  isReviewOpen: boolean
-  setIsReviewOpen: (isOpen: boolean) => void
-  addItem: (product: Product, option?: ProductOption, quantity?: number) => void
-  toggleItem: (product: Product, option?: ProductOption) => void
-  setProductQuantity: (product: Product, quantity: number, option?: ProductOption) => void
-  incrementProductQuantity: (product: Product, option?: ProductOption) => void
-  decrementProductQuantity: (product: Product, option?: ProductOption) => void
-  removeItem: (itemId: string) => void
-  updateQuantity: (itemId: string, quantity: number) => void
-  updateItemOption: (itemId: string, option: ProductOption) => void
-  updateItemNotes: (itemId: string, notes: string) => void
-  clearBox: () => void
-  isProductSelected: (productId: string) => boolean
-  getItemForProduct: (productId: string) => ShoppingBoxItem | undefined
-  totalCount: number
-  totalValuation: number
-  clientInfo: ClientInformation
-  setClientInfo: React.Dispatch<React.SetStateAction<ClientInformation>>
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useLanguage } from '../../context/LanguageContext'
 import { openWhatsAppChat } from '../../lib/helpers'
+import { BRAND_CONFIG } from '../../data/brand'
 import { ArrowRight } from 'lucide-react'
 
 export const WhatsAppFloatingHelp: React.FC = () => {
@@ -12,14 +13,14 @@ export const WhatsAppFloatingHelp: React.FC = () => {
 
   return (
     <footer className="w-full relative z-10 py-3.5 sm:py-6 border-t border-slate-200/80 dark:border-slate-800/80 mt-auto bg-white/70 dark:bg-[#0a0e14]/70 backdrop-blur-xl">
-      <div className="max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-6">
+      <div className="max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-6">
 
-        {/* Brand Information & Credits */}
-        <div className="w-full sm:w-auto space-y-0.5 sm:space-y-1 text-left rtl:text-right sm:text-left rtl:sm:text-right">
+        {/* Brand Information & Credits (Left on desktop, 2nd on mobile) */}
+        <div className="w-full sm:w-auto space-y-0.5 sm:space-y-1 text-center sm:text-left rtl:sm:text-right order-2 sm:order-1">
           <p className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
             {t('brand.tagline')}
           </p>
-          <div className="flex flex-wrap items-center justify-start gap-x-1.5 sm:gap-x-2 gap-y-0.5 text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start rtl:sm:justify-end gap-x-1.5 sm:gap-x-2 gap-y-0.5 text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500">
             <span>© 2026 Fakhama Decorat.</span>
             <span>•</span>
             <span>All rights reserved.</span>
@@ -28,12 +29,12 @@ export const WhatsAppFloatingHelp: React.FC = () => {
           </div>
         </div>
 
-        {/* Actions Container: TikTok Icon Button + WhatsApp Action Card */}
-        <div className="w-full sm:w-auto flex items-center justify-end gap-2 sm:gap-2.5">
+        {/* Actions Container: TikTok Icon Button + WhatsApp Action Card (Right on desktop, 1st on mobile) */}
+        <div className="w-full sm:w-auto flex items-center justify-center sm:justify-end gap-2 sm:gap-2.5 order-1 sm:order-2 shrink-0">
 
           {/* TikTok Account Button (Same height & style as WhatsApp button, placed on the other side) */}
           <a
-            href="https://www.tiktok.com/@fakhama_decorat?_r=1&_t=ZS-99Jn6a2X2Qf"
+            href={BRAND_CONFIG.social.tiktok}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center justify-center px-3 sm:px-3.5 py-2.5 sm:py-2.5 rounded-xl bg-white dark:bg-[#131823] hover:bg-slate-100 dark:hover:bg-[#1b2333] text-slate-800 dark:text-slate-100 hover:text-rose-500 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 shadow-sm hover:shadow-[0_0_20px_rgba(244,63,94,0.25)] transition-all duration-300 cursor-pointer active:scale-95 shrink-0"

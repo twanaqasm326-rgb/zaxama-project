@@ -64,9 +64,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '120 cm', depth: '65 cm', height: '85 cm', weight: '18 kg' },
     materials: ['Solid Brushed Brass', 'Hand-Blown Opaline Glass'],
-    mainImage: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1000&q=85',
+    mainImage: '/images/products/brass-chandelier.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1000&q=85',
+      '/images/products/brass-chandelier.jpg',
       'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=85',
     ],
     options: [
@@ -138,9 +138,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '35 cm', depth: '35 cm', height: '75 cm', weight: '46 kg' },
     materials: ['Natural Nero Marquina Marble'],
-    mainImage: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
+    mainImage: '/images/products/marquina-plinth.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85',
+      '/images/products/marquina-plinth.jpg',
     ],
     specifications: [
       { label: 'Marble Variety', value: 'Nero Marquina Black' },
@@ -171,9 +171,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '85 cm', depth: '5 cm', height: '190 cm', weight: '38 kg' },
     materials: ['Sand-Cast Solid Brass', '6mm Crystal Silver Glass'],
-    mainImage: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85',
+    mainImage: '/images/products/brass-mirror.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85',
+      '/images/products/brass-mirror.jpg',
     ],
     specifications: [
       { label: 'Frame Material', value: 'Cast Brass Alloy' },
@@ -489,9 +489,9 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     leadTime: 'Immediate Dispatch',
     dimensions: { width: '24 cm', depth: '24 cm', height: '32 cm', weight: '3.6 kg' },
     materials: ['Heavy Mouth-Blown Lead-Free Crystal'],
-    mainImage: 'https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=1000&q=85',
+    mainImage: '/images/products/glass-vessel.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=1000&q=85',
+      '/images/products/glass-vessel.jpg',
     ],
     specifications: [
       { label: 'Glass Type', value: 'Mouth-Blown Solid Crystal' },
@@ -532,8 +532,8 @@ export const SHOWROOM_PRODUCTS: Product[] = [
     code: 'FHK-LGT-17',
     name: 'Spotlight',
     category: 'lighting',
-    price: 5,
-    currency: 'USD',
+    price: 5000,
+    currency: 'IQD',
     hasDiscount: false,
     stockCount: 10,
     isNewArrival: true,
